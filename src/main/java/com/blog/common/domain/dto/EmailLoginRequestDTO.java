@@ -1,0 +1,29 @@
+package com.blog.common.domain.dto;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/9/2 15:51
+ * @Description: 邮箱验证码DTO
+ */
+@Data
+@ApiModel("邮箱验证码DTO")
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class EmailLoginRequestDTO {
+
+    /**
+     * 邮箱
+     */
+    @ApiModelProperty("邮箱")
+    private String email;
+
+    /**
+     * 验证码
+     */
+    @ApiModelProperty("验证码")
+    private String code;
+}

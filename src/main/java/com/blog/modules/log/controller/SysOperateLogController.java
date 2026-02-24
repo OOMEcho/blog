@@ -1,0 +1,41 @@
+package com.blog.modules.log.controller;
+
+import com.blog.common.domain.vo.PageVO;
+import com.blog.common.log.BusinessType;
+import com.blog.common.log.OperationLog;
+import com.blog.modules.log.domain.dto.SysOperateLogDTO;
+import com.blog.modules.log.domain.entity.SysOperateLog;
+import com.blog.modules.log.service.SysOperateLogService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/8/23 14:48
+ * @Description: 系统操作日志接口
+ */
+@RestController
+@Api(tags = "系统操作日志接口")
+@RequiredArgsConstructor
+@RequestMapping("/operateLog")
+public class SysOperateLogController {
+
+    private final SysOperateLogService sysOperateLogService;
+
+    @ApiOperation("分页列表")
+    @GetMapping("/pageList")
+    public PageVO<SysOperateLog> pageList(SysOperateLogDTO dto) {
+        return sysOperateLogService.pageList(dto);
+    }
+
+    @ApiOperation("导出操作日志")
+    @GetMapping("/export")
+    @OperationLog(moduleTitle = "导出操作日志", businessType = BusinessType.EXPORT)
+    public void export(SysOperateLogDTO dto, HttpServletResponse response) {
+        sysOperateLogService.export(dto, response);
+    }
+}

@@ -1,0 +1,61 @@
+package com.blog.utils;
+
+import com.blog.common.constant.CommonConstants;
+import com.blog.common.exception.BusinessException;
+import com.blog.common.result.ResultCodeEnum;
+import com.blog.modules.user.domain.entity.User;
+import com.blog.modules.user.mapper.UserMapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/08/22 14:20
+ * @Description: Security工具类
+ */
+public final class SecurityUtils {
+
+    private SecurityUtils() {
+        throw new UnsupportedOperationException("Utility class cannot be instantiated");
+    }
+
+    public static String getUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return CommonConstants.ANONYMOUS;
+        }
+        return authentication.getName();
+    }
+
+    public static boolean isAdmin() {
+        return CommonConstants.SUPER_ADMIN_ID.equals(getUserId());
+    }
+
+    public static Long getUserId() {
+        User currentUser = getCurrentUser();
+        return currentUser.getId();
+    }
+
+    public static User getCurrentUser() {
+        UserMapper userMapper = SpringContextUtil.getBean(UserMapper.class);
+        String username = getUsername();
+        if (CommonConstants.ANONYMOUS.equals(username)) {
+            throw new BusinessException(ResultCodeEnum.NOT_LOGGED_IN);
+        }
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername, username);
+        return userMapper.selectOne(queryWrapper);
+    }
+
+    public static String encryptPassword(String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.encode(password);
+    }
+
+    public static boolean matchesPassword(String oldPassword, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.matches(oldPassword, newPassword);
+    }
+}

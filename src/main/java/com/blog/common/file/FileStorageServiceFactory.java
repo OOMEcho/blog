@@ -1,0 +1,52 @@
+package com.blog.common.file;
+
+import com.blog.common.constant.FileConstants;
+import com.blog.common.exception.BusinessException;
+import com.blog.common.file.config.FileUploadProperties;
+import com.blog.common.file.service.FileStorageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/08/27 21:24
+ * @Description: 文件存储服务工厂
+ */
+@Service
+@RequiredArgsConstructor
+public class FileStorageServiceFactory {
+
+    private final FileUploadProperties properties;
+
+    private final Map<String, FileStorageService> fileStorageServices;
+
+    public FileStorageService getFileStorageService() {
+        return getFileStorageService(properties.getPlatform());
+    }
+
+    public FileStorageService getFileStorageService(StoragePlatform platform) {
+        String serviceName = getServiceName(platform);
+        FileStorageService service = fileStorageServices.get(serviceName);
+        if (service == null) {
+            throw new BusinessException("不支持的存储平台: " + platform);
+        }
+        return service;
+    }
+
+    private String getServiceName(StoragePlatform platform) {
+        switch (platform) {
+            case LOCAL:
+                return FileConstants.LOCAL;
+            case MINIO:
+                return FileConstants.MINIO;
+            case ALIYUN_OSS:
+                return FileConstants.ALIYUN;
+            case TENCENT_COS:
+                return FileConstants.TENCENT;
+            default:
+                throw new BusinessException("不支持的存储平台: " + platform);
+        }
+    }
+}

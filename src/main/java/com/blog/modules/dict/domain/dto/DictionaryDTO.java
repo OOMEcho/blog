@@ -1,0 +1,55 @@
+package com.blog.modules.dict.domain.dto;
+
+import com.blog.common.domain.dto.PageDTO;
+import com.blog.common.validator.EnumString;
+import com.blog.common.validator.ValidGroup;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/9/8 16:17
+ * @Description: 字典DTO
+ */
+@Data
+@ApiModel("字典DTO")
+@EqualsAndHashCode(callSuper = true)
+public class DictionaryDTO extends PageDTO {
+
+    @ApiModelProperty("主键ID")
+    @Null(groups = ValidGroup.Create.class, message = "应用ID必须为空")
+    @NotNull(groups = ValidGroup.Update.class, message = "应用ID不能为空")
+    private Long id;
+
+    @ApiModelProperty("备注")
+    private String remark;
+
+    @ApiModelProperty("字典名称")
+    @NotBlank(message = "字典名称不能为空", groups = {ValidGroup.Create.class, ValidGroup.Update.class})
+    private String dictName;
+
+    @ApiModelProperty("字典类型")
+    @NotBlank(message = "字典类型不能为空", groups = {ValidGroup.Create.class, ValidGroup.Update.class})
+    private String dictType;
+
+    @ApiModelProperty("字典排序")
+    private Integer dictSort;
+
+    @ApiModelProperty("字典标签")
+    @NotBlank(message = "字典类型不能为空", groups = {ValidGroup.Create.class, ValidGroup.Update.class})
+    private String dictLabel;
+
+    @ApiModelProperty("字典键值")
+    @NotBlank(message = "字典键值不能为空", groups = {ValidGroup.Create.class, ValidGroup.Update.class})
+    private String dictValue;
+
+    @ApiModelProperty("状态")
+    @EnumString(groups = {ValidGroup.Create.class, ValidGroup.Update.class}, value = {"0", "1"}, message = "状态只允许为0或1")
+    private String status;
+}

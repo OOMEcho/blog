@@ -1,0 +1,140 @@
+package com.blog.common.file.service.impl;
+
+import com.blog.common.constant.FileConstants;
+import com.blog.common.exception.BusinessException;
+import com.blog.common.file.StoragePlatform;
+import com.blog.common.file.config.FileUploadProperties;
+import com.blog.common.file.service.AbstractFileStorageService;
+import com.blog.modules.file.domain.entity.FileMetadata;
+import com.blog.modules.file.mapper.FileMetadataMapper;
+import io.minio.*;
+import io.minio.http.Method;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.time.Duration;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/8/27 21:43
+ * @Description: Minio文件存储服务实现
+ */
+@Slf4j
+@Service(FileConstants.MINIO)
+@ConditionalOnProperty(prefix = "file.upload", name = "platform", havingValue = "minio")
+public class MinioFileStorageServiceImpl extends AbstractFileStorageService {
+
+    private final MinioClient minioClient;
+
+    private final FileUploadProperties.MinioConfig config;
+
+    public MinioFileStorageServiceImpl(FileUploadProperties properties, FileMetadataMapper fileMetadataMapper, MinioClient minioClient) {
+        super(properties, fileMetadataMapper);
+        this.minioClient = minioClient;
+        this.config = properties.getMinio();
+    }
+
+    @Override
+    public FileMetadata upload(MultipartFile file, String directory) {
+        try {
+            String fileName = generateFileName(file.getOriginalFilename());
+            String objectName = buildObjectName(directory, fileName);
+
+            byte[] fileBytes = file.getBytes();
+            validateFile(file, fileBytes);
+
+            try (InputStream inputStream = new ByteArrayInputStream(fileBytes)) {
+                minioClient.putObject(PutObjectArgs.builder()
+                        .bucket(config.getBucketName())
+                        .object(objectName)
+                        .stream(inputStream, fileBytes.length, -1)
+                        .contentType(getContentType(file))
+                        .build());
+            }
+
+            return buildFileUploadResult(file, fileName, objectName, fileBytes,
+                    StoragePlatform.MINIO.name());
+
+        } catch (Exception e) {
+            log.error("MinIO文件上传失败", e);
+            throw new BusinessException("上传失败,请联系系统管理员");
+        }
+    }
+
+    @Override
+    public InputStream download(String filePath) {
+        try {
+            return minioClient.getObject(GetObjectArgs.builder()
+                    .bucket(config.getBucketName())
+                    .object(filePath)
+                    .build());
+        } catch (Exception e) {
+            log.error("获取MinIO文件流失败: {}", filePath, e);
+            throw new BusinessException("下载失败,请联系系统管理员");
+        }
+    }
+
+    @Override
+    public void delete(String filePath) {
+        try {
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                    .bucket(config.getBucketName())
+                    .object(filePath)
+                    .build());
+        } catch (Exception e) {
+            log.error("删除MinIO文件失败: {}", filePath, e);
+            throw new BusinessException("删除失败,请联系系统管理员");
+        }
+    }
+
+    @Override
+    public boolean exists(String filePath) {
+        try {
+            minioClient.statObject(StatObjectArgs.builder()
+                    .bucket(config.getBucketName())
+                    .object(filePath)
+                    .build());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String generatePresignedUploadUrl(String filePath, Duration expiration) {
+        try {
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.PUT)
+                            .bucket(config.getBucketName())
+                            .object(filePath)
+                            .expiry((int) expiration.getSeconds())
+                            .build()
+            );
+        } catch (Exception e) {
+            log.error("生成MinIO预签名上传URL失败: {}", filePath, e);
+            throw new BusinessException("上传失败,请联系系统管理员");
+        }
+    }
+
+    @Override
+    public String getTemporaryDownloadUrl(String filePath, Duration expiration) {
+        try {
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(config.getBucketName())
+                            .object(filePath)
+                            .expiry((int) expiration.getSeconds())
+                            .build()
+            );
+        } catch (Exception e) {
+            log.error("生成MinIO临时下载URL失败: {}", filePath, e);
+            throw new BusinessException("下载失败,请联系系统管理员");
+        }
+    }
+}

@@ -1,0 +1,73 @@
+package com.blog.config.security.handler;
+
+import com.blog.common.constant.CommonConstants;
+import com.blog.common.event.DataChangePublisher;
+import com.blog.common.ip2region.Ip2regionService;
+import com.blog.common.result.ResultCodeEnum;
+import com.blog.common.trace.TraceIdUtils;
+import com.blog.modules.log.domain.entity.SysOperateLog;
+import com.blog.utils.IpUtils;
+import com.blog.utils.ResponseUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/9/2 22:35
+ * @Description: 匿名用户访问无权限资源时（即未登录，或者登录状态过期失效）的处理逻辑
+ */
+@Component
+@RequiredArgsConstructor
+public class MyAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    private final DataChangePublisher dataChangePublisher;
+
+    private final Ip2regionService ip2regionService;
+
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
+        // 记录认证失败日志
+        logAuthenticationFailure(request, authException);
+
+        ResponseUtils.writeError(response, ResultCodeEnum.NOT_LOGGED_IN);
+    }
+
+    /**
+     * 记录认证失败日志
+     */
+    private void logAuthenticationFailure(HttpServletRequest request, AuthenticationException authException) {
+        // 排除根路径请求的日志记录,日志降噪
+        String requestURI = request.getRequestURI();
+        if ("/".equals(requestURI)) {
+            return;
+        }
+
+        try {
+            String ip = IpUtils.getIpAddr(request);
+
+            SysOperateLog log = new SysOperateLog();
+            log.setTraceId(TraceIdUtils.getTraceId());
+            log.setModuleTitle("安全-认证检查");
+            log.setBusinessType(0);
+            log.setRequestUrl(request.getRequestURI());
+            log.setRequestIp(ip);
+            log.setRequestLocal(ip2regionService.getRegion(ip));
+            log.setRequestType(request.getMethod());
+            log.setRequestMethod("MyAuthenticationEntryPoint.commence()");
+            log.setOperateUser("anonymous");
+            log.setOperateTime(LocalDateTime.now());
+            log.setOperateStatus(CommonConstants.DISABLE_STATUS);
+            log.setErrorMessage(authException.getMessage());
+
+            dataChangePublisher.publishLog(log);
+        } catch (Exception e) {
+            // 日志记录失败不应影响主流程，静默处理
+        }
+    }
+}

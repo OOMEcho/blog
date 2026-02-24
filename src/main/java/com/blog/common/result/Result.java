@@ -1,0 +1,82 @@
+package com.blog.common.result;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/08/21 13:08
+ * @Description: 统一返回格式
+ */
+@Data
+@ApiModel("统一返回格式")
+@NoArgsConstructor
+public class Result<T> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 状态码
+     */
+    @ApiModelProperty("状态码")
+    private Integer code;
+
+    /**
+     * 响应消息
+     */
+    @ApiModelProperty("响应消息")
+    private String message;
+
+    /**
+     * 响应数据
+     */
+    @ApiModelProperty("响应数据")
+    private T data;
+
+    /**
+     * 时间戳
+     */
+    private long timestamp;
+
+    private Result(ResultCodeEnum resultCode, T data) {
+        this.timestamp = System.currentTimeMillis();
+        this.code = resultCode.getCode();
+        this.message = resultCode.getMessage();
+        this.data = data;
+    }
+
+    private Result(Integer code, String message, T data) {
+        this.timestamp = System.currentTimeMillis();
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
+    public static <T> Result<T> success() {
+        return new Result<>(ResultCodeEnum.SUCCESS, null);
+    }
+
+    public static <T> Result<T> success(T data) {
+        return new Result<>(ResultCodeEnum.SUCCESS, data);
+    }
+
+    public static <T> Result<T> success(ResultCodeEnum resultCodeEnum, T data) {
+        return new Result<>(resultCodeEnum, data);
+    }
+
+    public static <T> Result<T> error(Integer code, String message) {
+        return new Result<>(code, message, null);
+    }
+
+    public static <T> Result<T> error(String message) {
+        return new Result<>(ResultCodeEnum.ERROR.getCode(), message, null);
+    }
+
+    public static <T> Result<T> error(ResultCodeEnum resultCode) {
+        return new Result<>(resultCode, null);
+    }
+}

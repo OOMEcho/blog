@@ -1,0 +1,89 @@
+package com.blog.config.security.customize;
+
+import cn.hutool.core.util.StrUtil;
+import com.blog.common.constant.CommonConstants;
+import com.blog.common.constant.RedisConstants;
+import com.blog.common.exception.BusinessException;
+import com.blog.common.exception.LoginException;
+import com.blog.common.result.ResultCodeEnum;
+import com.blog.utils.JwtTokenUtil;
+import com.blog.utils.RedisUtils;
+import com.blog.utils.ResponseUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.lang.NonNull;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/9/2 23:10
+ * @Description: JWT过滤器
+ */
+@Component
+@RequiredArgsConstructor
+public class JwtTokenFilter extends OncePerRequestFilter {
+
+    private final JwtTokenUtil jwtTokenUtil;
+
+    private final RedisUtils redisUtils;
+
+    @Override
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        if (request.getRequestURI().startsWith("/profile/refreshToken")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StrUtil.isEmpty(header) || !header.startsWith(CommonConstants.TOKEN_PREFIX)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        final String token = header.substring(CommonConstants.TOKEN_PREFIX.length()).trim();
+        try {
+            // 校验token有效性
+            if (!jwtTokenUtil.validateToken(token)) {
+                throw new LoginException(ResultCodeEnum.LOGIN_EXPIRE);
+            }
+
+            // 黑名单校验 校验是否为access_token
+            final String jti = jwtTokenUtil.getJti(token);
+            if (redisUtils.hasKey(RedisConstants.BLACKLIST_TOKEN + jti) || !jwtTokenUtil.isAccessToken(token)) {
+                throw new BusinessException(ResultCodeEnum.NOT_LOGGED_IN);
+            }
+
+            String username = jwtTokenUtil.getUsernameFromToken(token);
+            String currentJti = redisUtils.get(RedisConstants.USER_TOKEN_JTI + username);
+            if (StrUtil.isBlank(currentJti) || !currentJti.equals(jti)) {
+                throw new BusinessException(ResultCodeEnum.NOT_LOGGED_IN);
+            }
+
+            Authentication authentication = jwtTokenUtil.getAuthenticationToken(token);
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHolder.setContext(context);
+
+            filterChain.doFilter(request, response);
+        } catch (LoginException e) {
+            // access_token 过期，返回特定业务码，前端据此触发刷新
+            ResponseUtils.writeError(response, ResultCodeEnum.LOGIN_EXPIRE);
+        } catch (Exception e) {
+            // 其他异常统一当作未登录处理
+            ResponseUtils.writeError(response, ResultCodeEnum.NOT_LOGGED_IN);
+        } finally {
+            // 确保在请求结束后清理SecurityContext
+            SecurityContextHolder.clearContext();
+        }
+    }
+}

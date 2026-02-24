@@ -1,0 +1,31 @@
+package com.blog.modules.log.service;
+
+import com.blog.common.domain.vo.PageVO;
+import com.blog.modules.log.domain.dto.SysOperateLogDTO;
+import com.blog.modules.log.domain.entity.SysOperateLog;
+
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/8/23 14:50
+ * @Description: 系统操作日志业务层
+ */
+public interface SysOperateLogService {
+
+    /**
+     * 查询操作日志列表
+     *
+     * @param dto 查询参数
+     * @return 操作日志列表
+     */
+    PageVO<SysOperateLog> pageList(SysOperateLogDTO dto);
+
+    /**
+     * 导出操作日志
+     *
+     * @param dto      查询参数
+     * @param response 响应对象
+     */
+    void export(SysOperateLogDTO dto, HttpServletResponse response);
+}

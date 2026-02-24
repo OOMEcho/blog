@@ -1,0 +1,98 @@
+package com.blog.modules.file.controller;
+
+import com.blog.common.duplicate.PreventDuplicateSubmit;
+import com.blog.common.file.StoragePlatform;
+import com.blog.common.log.BusinessType;
+import com.blog.common.log.OperationLog;
+import com.blog.modules.file.domain.entity.FileMetadata;
+import com.blog.modules.file.service.FileService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/8/28 21:24
+ * @Description: 文件服务接口
+ */
+@Slf4j
+@RestController
+@Api(tags = "文件服务接口")
+@RequiredArgsConstructor
+@RequestMapping("/file")
+public class FileServiceController {
+
+    private final FileService fileService;
+
+    @ApiOperation("文件上传")
+    @PostMapping("/upload")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "文件上传", businessType = BusinessType.IMPORT)
+    public FileMetadata uploadFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "directory", required = false) String directory) {
+        return fileService.uploadFile(file, directory);
+    }
+
+    @ApiOperation("批量文件上传")
+    @PostMapping("/upload/batch")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "批量文件上传", businessType = BusinessType.IMPORT)
+    public List<FileMetadata> uploadBatchFiles(@RequestParam("files") MultipartFile[] files, @RequestParam(value = "directory", required = false) String directory) {
+        return fileService.uploadBatchFiles(files, directory);
+    }
+
+    @ApiOperation("获取临时下载URL")
+    @GetMapping("/temporary-download-url")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "获取临时下载URL", businessType = BusinessType.EXPORT)
+    public Map<String, String> getTemporaryDownloadUrl(@RequestParam String filePath, @RequestParam(required = false, defaultValue = "60") long expirationSeconds) {
+        return fileService.getTemporaryDownloadUrl(filePath, expirationSeconds);
+    }
+
+    @ApiOperation("文件下载")
+    @GetMapping("/download")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "文件下载", businessType = BusinessType.EXPORT)
+    public void download(@RequestParam("filePath") String filePath, HttpServletResponse response) {
+        fileService.download(filePath, response);
+    }
+
+    @ApiOperation("本地文件临时下载")
+    @GetMapping("/localDownload/**")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "本地文件临时下载", businessType = BusinessType.EXPORT)
+    public void localDownload(HttpServletRequest request, HttpServletResponse response) {
+        fileService.localDownload(request, response);
+    }
+
+    @ApiOperation("指定存储平台上传文件")
+    @PostMapping("/upload/{platform}")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "指定存储平台上传文件", businessType = BusinessType.IMPORT)
+    public FileMetadata uploadFileWithPlatform(@PathVariable("platform") StoragePlatform platform, @RequestParam("file") MultipartFile file, @RequestParam(value = "directory", required = false) String directory) {
+        return fileService.uploadFileWithPlatform(platform, file, directory);
+    }
+
+    @ApiOperation("文件删除")
+    @DeleteMapping("/delete")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "文件删除", businessType = BusinessType.DELETE)
+    public String deleteFile(@RequestParam("filePath") String filePath) {
+        return fileService.deleteFile(filePath);
+    }
+
+    @ApiOperation("获取预签名上传URL")
+    @GetMapping("/presigned-upload-url")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "获取预签名上传URL", businessType = BusinessType.EXPORT)
+    public Map<String, String> getPresignedUploadUrl(@RequestParam String fileName, @RequestParam(required = false) String directory) {
+        return fileService.getPresignedUploadUrl(fileName, directory);
+    }
+}

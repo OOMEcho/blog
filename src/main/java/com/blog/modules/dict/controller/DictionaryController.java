@@ -1,0 +1,67 @@
+package com.blog.modules.dict.controller;
+
+import com.blog.common.domain.vo.PageVO;
+import com.blog.common.duplicate.PreventDuplicateSubmit;
+import com.blog.common.log.BusinessType;
+import com.blog.common.log.OperationLog;
+import com.blog.common.validator.ValidGroup;
+import com.blog.modules.dict.domain.dto.DictionaryDTO;
+import com.blog.modules.dict.domain.entity.Dictionary;
+import com.blog.modules.dict.service.DictionaryService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/9/8 16:08
+ * @Description: 字典接口
+ */
+@RestController
+@Api(tags = "字典接口")
+@RequiredArgsConstructor
+@RequestMapping("/dictionary")
+public class DictionaryController {
+
+    private final DictionaryService dictionaryService;
+
+    @ApiOperation("分页列表")
+    @GetMapping("/pageList")
+    public PageVO<Dictionary> pageList(DictionaryDTO dto) {
+        return dictionaryService.pageList(dto);
+    }
+
+    @ApiOperation("删除字典")
+    @DeleteMapping("/delete/{id}")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "删除字典", businessType = BusinessType.DELETE)
+    public String delete(@PathVariable("id") Long id) {
+        return dictionaryService.delete(id);
+    }
+
+    @ApiOperation("新增字典")
+    @PostMapping("/add")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "新增字典", businessType = BusinessType.INSERT)
+    public String add(@Validated(ValidGroup.Create.class) @RequestBody DictionaryDTO dto) {
+        return dictionaryService.add(dto);
+    }
+
+    @ApiOperation("修改字典")
+    @PutMapping("/update")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "修改字典", businessType = BusinessType.UPDATE)
+    public String update(@Validated(ValidGroup.Update.class) @RequestBody DictionaryDTO dto) {
+        return dictionaryService.update(dto);
+    }
+
+    @ApiOperation("根据类型获取字典列表")
+    @GetMapping("/list")
+    public List<Dictionary> list(@RequestParam("dictType") String dictType) {
+        return dictionaryService.list(dictType);
+    }
+}

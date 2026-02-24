@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.modules.tag.mapper.TagMapper">
+
+    <resultMap id="BaseResultMap" type="com.blog.modules.tag.domain.entity.Tag">
+        <id property="id" column="id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleted" column="deleted"/>
+        <result property="version" column="version"/>
+        <result property="name" column="name"/>
+        <result property="color" column="color"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,create_by,update_by,create_time,update_time,deleted,
+        version,name,color
+    </sql>
+
+    <select id="selectTagsByArticleId" resultMap="BaseResultMap">
+        SELECT t.*
+        FROM t_tag t
+                 INNER JOIN t_article_tag at ON t.id = at.tag_id
+        WHERE at.article_id = #{articleId}
+          AND t.deleted = 0
+    </select>
+</mapper>

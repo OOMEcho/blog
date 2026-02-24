@@ -1,0 +1,46 @@
+package com.blog.common.domain.vo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/8/31 20:10
+ * @Description: 滑块验证码VO
+ */
+@Data
+@ApiModel("滑块验证码VO")
+public class CaptchaVO {
+
+    /**
+     * 验证码key
+     */
+    @ApiModelProperty("验证码key")
+    private String captchaKey;
+
+    /**
+     * 背景图
+     */
+    @ApiModelProperty("背景图")
+    private String backgroundImage;
+
+    /**
+     * 滑块图
+     */
+    @ApiModelProperty("滑块图")
+    private String sliderImage;
+
+    /**
+     * 滑块Y轴位置
+     */
+    @ApiModelProperty("滑块Y轴位置")
+    private Integer sliderY;
+
+    public CaptchaVO(String captchaKey, String backgroundImage, String sliderImage, Integer sliderY) {
+        this.captchaKey = captchaKey;
+        this.backgroundImage = backgroundImage;
+        this.sliderImage = sliderImage;
+        this.sliderY = sliderY;
+    }
+}

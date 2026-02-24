@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.modules.menu.mapper.MenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.blog.modules.menu.domain.entity.Menu">
+        <id property="id" column="id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleted" column="deleted"/>
+        <result property="version" column="version"/>
+        <result property="remark" column="remark"/>
+        <result property="menuCode" column="menu_code"/>
+        <result property="menuName" column="menu_name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="name" column="name"/>
+        <result property="path" column="path"/>
+        <result property="menuType" column="menu_type"/>
+        <result property="icon" column="icon"/>
+        <result property="hidden" column="hidden"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, create_by, update_by, create_time, update_time, deleted,
+        version, remark, menu_code, menu_name, parent_id, order_num,
+        `name`, `path`, menu_type, icon, hidden, `status`
+    </sql>
+
+    <select id="selectMenuByUserId" resultMap="BaseResultMap">
+        SELECT DISTINCT m.*
+        FROM t_menu m
+                 INNER JOIN t_menu_permission mp ON mp.menu_id = m.id
+                 INNER JOIN t_permission p ON p.perm_code = mp.perm_code AND p.deleted = 0 AND p.status = '0'
+                 INNER JOIN t_role_permission rp ON rp.perm_code = mp.perm_code
+                 INNER JOIN t_user_role ur ON ur.role_id = rp.role_id
+                 INNER JOIN t_role r ON r.id = ur.role_id AND r.deleted = 0 AND r.status = '0'
+        WHERE ur.user_id = #{userId}
+          AND m.menu_type IN ('D', 'M')
+          AND m.deleted = 0
+          AND m.status = '0'
+        ORDER BY m.parent_id, m.order_num
+    </select>
+
+    <update id="updateBatchPath">
+        UPDATE t_menu
+        SET path =
+        <foreach collection="children" item="item" separator=" " open="CASE id" close="END">
+            WHEN #{item.id} THEN #{item.path}
+        </foreach>
+        ,
+        update_by =
+        <foreach collection="children" item="item" separator=" " open="CASE id" close="END">
+            WHEN #{item.id} THEN #{item.updateBy}
+        </foreach>
+        WHERE id IN
+        <foreach collection="children" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+</mapper>

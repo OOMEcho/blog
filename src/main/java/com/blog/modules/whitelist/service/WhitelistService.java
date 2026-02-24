@@ -1,0 +1,53 @@
+package com.blog.modules.whitelist.service;
+
+import com.blog.common.domain.vo.PageVO;
+import com.blog.modules.whitelist.domain.dto.WhitelistDTO;
+import com.blog.modules.whitelist.domain.entity.Whitelist;
+
+/**
+ * @Author: xuesong.lei
+ * @Date: 2025/9/8 10:35
+ * @Description: 白名单业务层
+ */
+public interface WhitelistService {
+
+    /**
+     * 分页列表
+     *
+     * @param dto 查询参数
+     * @return 白名单分页列表
+     */
+    PageVO<Whitelist> pageList(WhitelistDTO dto);
+
+    /**
+     * 详情
+     *
+     * @param id 白名单ID
+     * @return 白名单详情
+     */
+    Whitelist detail(Long id);
+
+    /**
+     * 删除白名单
+     *
+     * @param id 白名单ID
+     * @return 响应消息
+     */
+    String delete(Long id);
+
+    /**
+     * 新增白名单
+     *
+     * @param dto 白名单DTO
+     * @return 响应消息
+     */
+    String add(WhitelistDTO dto);
+
+    /**
+     * 修改白名单
+     *
+     * @param dto 白名单DTO
+     * @return 响应消息
+     */
+    String update(WhitelistDTO dto);
+}
