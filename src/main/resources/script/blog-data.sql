@@ -206,13 +206,13 @@ INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `re
 ('notification:readAll', '通知管理-全部已读', 'A', '0', '接口权限', 1);
 
 INSERT INTO `t_menu` (`id`, `menu_code`, `menu_name`, `parent_id`, `order_num`, `name`, `path`, `menu_type`, `icon`, `hidden`, `status`, `create_by`) VALUES
-(1, 'blog', '博客管理', 0, 1, 'Blog', '/blog-admin', 'D', 'icon-wenzhang', 0, '0', 1),
-(2, 'blog:article', '文章管理', 1, 1, 'Article', '/blog-admin/article', 'M', 'icon-wenzhang', 0, '0', 1),
-(3, 'blog:category', '分类管理', 1, 2, 'Category', '/blog-admin/category', 'M', 'icon-fenlei', 0, '0', 1),
-(4, 'blog:tag', '标签管理', 1, 3, 'Tag', '/blog-admin/tag', 'M', 'icon-biaoqian', 0, '0', 1),
-(5, 'blog:comment', '评论管理', 1, 4, 'Comment', '/blog-admin/comment', 'M', 'icon-pinglun', 0, '0', 1),
-(6, 'blog:link', '友情链接', 1, 5, 'FriendLink', '/blog-admin/link', 'M', 'icon-lianjie', 0, '0', 1),
-(7, 'blog:config', '博客配置', 1, 6, 'BlogConfig', '/blog-admin/config', 'M', 'icon-peizhi', 0, '0', 1),
+(1, 'blog', '博客管理', 0, 1, 'Blog', '/blog', 'D', 'icon-wenzhang', 0, '0', 1),
+(2, 'blog:article', '文章管理', 1, 1, 'Article', '/blog/article', 'M', 'icon-wenzhang', 0, '0', 1),
+(3, 'blog:category', '分类管理', 1, 2, 'Category', '/blog/category', 'M', 'icon-fenlei', 0, '0', 1),
+(4, 'blog:tag', '标签管理', 1, 3, 'Tag', '/blog/tag', 'M', 'icon-biaoqian', 0, '0', 1),
+(5, 'blog:comment', '评论管理', 1, 4, 'Comment', '/blog/comment', 'M', 'icon-pinglun', 0, '0', 1),
+(6, 'blog:link', '友情链接', 1, 5, 'FriendLink', '/blog/link', 'M', 'icon-lianjie', 0, '0', 1),
+(7, 'blog:config', '博客配置', 1, 6, 'BlogConfig', '/blog/config', 'M', 'icon-peizhi', 0, '0', 1),
 (10, 'system', '系统管理', 0, 2, 'System', '/system', 'D', 'icon-shezhi', 0, '0', 1),
 (11, 'system:user', '用户管理', 10, 1, 'User', '/system/user', 'M', 'icon-yonghuzhuzhanghaoguanli', 0, '0', 1),
 (12, 'system:role', '角色管理', 10, 2, 'Role', '/system/role', 'M', 'icon-zhuzhanghaoliebiao', 0, '0', 1),
