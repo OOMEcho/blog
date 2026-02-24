@@ -3,7 +3,6 @@ package com.blog.modules.notification.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.blog.common.constant.CommonConstants;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.common.exception.BusinessException;
@@ -39,7 +38,7 @@ public class NotificationServiceImpl implements NotificationService {
         LambdaQueryWrapper<Notification> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Notification::getUserId, userId)
                 .eq(ObjectUtils.isNotNull(dto.getIsRead()), Notification::getIsRead, dto.getIsRead())
-                .eq(StringUtils.isNotBlank(dto.getType()), Notification::getType, dto.getType())
+                .eq(ObjectUtils.isNotNull(dto.getType()), Notification::getType, dto.getType())
                 .orderByDesc(Notification::getCreateTime);
 
         return PageUtils.of(dto).pagingAndConvert(notificationMapper, queryWrapper, notificationConvert::toNotificationVo);

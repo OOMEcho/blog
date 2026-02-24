@@ -17,6 +17,7 @@ import com.blog.modules.article.service.ArticleService;
 import com.blog.modules.category.domain.entity.Category;
 import com.blog.modules.category.mapper.CategoryMapper;
 import com.blog.modules.notification.domain.entity.Notification;
+import com.blog.modules.notification.domain.enums.NotificationType;
 import com.blog.modules.tag.domain.entity.ArticleTag;
 import com.blog.modules.tag.mapper.ArticleTagMapper;
 import com.blog.modules.tag.mapper.TagMapper;
@@ -285,7 +286,7 @@ public class ArticleServiceImpl implements ArticleService {
         Notification notification = new Notification();
         notification.setTitle("文章审核通知");
         notification.setContent("用户「" + authorName + "」提交了文章《" + article.getTitle() + "》等待审核");
-        notification.setType("AUDIT");
+        notification.setType(NotificationType.AUDIT);
         notification.setRelatedId(article.getId());
 
         // 通过事件异步发送通知给所有管理员
@@ -302,7 +303,7 @@ public class ArticleServiceImpl implements ArticleService {
     private void notifyAuthorAuditResult(Article article, String status, String rejectReason) {
         Notification notification = new Notification();
         notification.setUserId(article.getCreateBy());
-        notification.setType("AUDIT");
+        notification.setType(NotificationType.AUDIT);
         notification.setRelatedId(article.getId());
 
         if ("1".equals(status)) {

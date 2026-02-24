@@ -1,5 +1,6 @@
 package com.blog.modules.notification.domain.vo;
 
+import com.blog.modules.notification.domain.enums.NotificationType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -26,7 +27,7 @@ public class NotificationVO {
     private String content;
 
     @ApiModelProperty("通知类型(AUDIT/SYSTEM/COMMENT)")
-    private String type;
+    private NotificationType type;
 
     @ApiModelProperty("关联业务ID")
     private Long relatedId;

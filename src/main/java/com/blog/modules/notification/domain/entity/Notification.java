@@ -1,6 +1,7 @@
 package com.blog.modules.notification.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.blog.modules.notification.domain.enums.NotificationType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,7 +45,7 @@ public class Notification implements Serializable {
 
     @ApiModelProperty("通知类型(AUDIT-审核,SYSTEM-系统,COMMENT-评论)")
     @TableField(value = "type")
-    private String type;
+    private NotificationType type;
 
     @ApiModelProperty("关联业务ID(如文章ID)")
     @TableField(value = "related_id")

@@ -60,6 +60,7 @@ mybatis-plus:
   mapper-locations: classpath*:com/blog/modules/**/mapper/*Mapper.xml # 映射xml文件
   configuration:
     map-underscore-to-camel-case: true # 下划线转驼峰
+    default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler # 枚举类型处理器
   global-config:
     banner: false
     db-config:
