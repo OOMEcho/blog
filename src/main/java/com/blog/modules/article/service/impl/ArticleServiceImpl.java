@@ -77,14 +77,6 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ArticleVO detail(Long id) {
-        Article article = articleMapper.selectById(id);
-        ArticleVO articleVo = articleConvert.toArticleVo(article);
-        enrichArticleVo(articleVo, article);
-        return articleVo;
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public String add(ArticleDTO dto) {
         // 非管理员不允许直接发布，只能保存草稿(0)或提交审核(2)

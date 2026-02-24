@@ -20,14 +20,6 @@ public interface ArticleService {
     PageVO<ArticleVO> pageList(ArticleDTO dto);
 
     /**
-     * 详情
-     *
-     * @param id 文章ID
-     * @return 文章详情
-     */
-    ArticleVO detail(Long id);
-
-    /**
      * 新增文章
      *
      * @param dto 文章DTO

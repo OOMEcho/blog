@@ -33,12 +33,6 @@ public class ArticleController {
         return articleService.pageList(dto);
     }
 
-    @ApiOperation("文章详情")
-    @GetMapping("/detail/{id}")
-    public ArticleVO detail(@PathVariable("id") Long id) {
-        return articleService.detail(id);
-    }
-
     @ApiOperation("新增文章")
     @PostMapping("/add")
     @PreventDuplicateSubmit
