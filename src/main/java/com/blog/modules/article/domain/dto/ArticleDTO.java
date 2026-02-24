@@ -30,6 +30,10 @@ public class ArticleDTO extends PageDTO {
     @NotNull(groups = ValidGroup.Update.class, message = "文章ID不能为空")
     private Long id;
 
+    @ApiModelProperty("作者ID")
+    @NotNull(groups = ValidGroup.Update.class, message = "作者ID不能为空")
+    private Long authorId;
+
     @ApiModelProperty("文章标题")
     @NotBlank(groups = {ValidGroup.Create.class, ValidGroup.Update.class}, message = "文章标题不能为空")
     private String title;
