@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.blog.common.constant.CommonConstants;
 import com.blog.common.domain.vo.PageVO;
+import com.blog.common.event.DataChangePublisher;
 import com.blog.modules.article.domain.entity.Article;
 import com.blog.modules.article.mapper.ArticleMapper;
 import com.blog.modules.comment.domain.dto.CommentDTO;
@@ -13,6 +14,8 @@ import com.blog.modules.comment.domain.vo.CommentVO;
 import com.blog.modules.comment.mapper.CommentMapper;
 import com.blog.modules.comment.service.CommentConvert;
 import com.blog.modules.comment.service.CommentService;
+import com.blog.modules.notification.domain.entity.Notification;
+import com.blog.modules.notification.domain.enums.NotificationType;
 import com.blog.modules.user.domain.entity.User;
 import com.blog.modules.user.mapper.UserMapper;
 import com.blog.utils.PageUtils;
@@ -38,6 +41,8 @@ public class CommentServiceImpl implements CommentService {
 
     private final ArticleMapper articleMapper;
 
+    private final DataChangePublisher dataChangePublisher;
+
     @Override
     public PageVO<CommentVO> pageList(CommentDTO dto) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
@@ -60,6 +65,12 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentMapper.selectById(id);
         comment.setStatus(status);
         commentMapper.updateById(comment);
+
+        // 审核通过或拒绝时通知评论者
+        if ("1".equals(status) || "2".equals(status)) {
+            notifyCommenterAuditResult(comment, status);
+        }
+
         return CommonConstants.SUCCESS_MESSAGE;
     }
 
@@ -108,5 +119,40 @@ public class CommentServiceImpl implements CommentService {
                 }
             }
         }
+    }
+
+    /**
+     * 评论审核结果通知评论者
+     *
+     * @param comment 评论实体
+     * @param status  审核状态（1=通过，2=拒绝）
+     */
+    private void notifyCommenterAuditResult(Comment comment, String status) {
+        if (ObjectUtils.isNull(comment.getUserId())) {
+            return;
+        }
+
+        String articleTitle = "未知文章";
+        if (ObjectUtils.isNotNull(comment.getArticleId())) {
+            Article article = articleMapper.selectById(comment.getArticleId());
+            if (ObjectUtils.isNotNull(article)) {
+                articleTitle = article.getTitle();
+            }
+        }
+
+        Notification notification = new Notification();
+        notification.setUserId(comment.getUserId());
+        notification.setType(NotificationType.COMMENT);
+        notification.setRelatedId(comment.getArticleId());
+
+        if ("1".equals(status)) {
+            notification.setTitle("评论审核通过");
+            notification.setContent("您在文章《" + articleTitle + "》下的评论已通过审核");
+        } else {
+            notification.setTitle("评论审核拒绝");
+            notification.setContent("您在文章《" + articleTitle + "》下的评论未通过审核");
+        }
+
+        dataChangePublisher.publishNotification(notification);
     }
 }
