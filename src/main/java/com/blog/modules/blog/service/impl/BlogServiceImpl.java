@@ -81,8 +81,6 @@ public class BlogServiceImpl implements BlogService {
 
     private final DataChangePublisher dataChangePublisher;
 
-    // ==================== 文章相关 ====================
-
     @Override
     public PageVO<ArticleVO> articles(PageDTO pageDTO, Long categoryId, Long tagId, String keyword) {
         LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
@@ -186,8 +184,6 @@ public class BlogServiceImpl implements BlogService {
         });
     }
 
-    // ==================== 分类与标签 ====================
-
     @Override
     public List<Category> categories() {
         LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
@@ -200,8 +196,6 @@ public class BlogServiceImpl implements BlogService {
         return tagMapper.selectList(null);
     }
 
-    // ==================== 友情链接 ====================
-
     @Override
     public List<FriendLink> links() {
         LambdaQueryWrapper<FriendLink> wrapper = new LambdaQueryWrapper<>();
@@ -210,14 +204,10 @@ public class BlogServiceImpl implements BlogService {
         return friendLinkMapper.selectList(wrapper);
     }
 
-    // ==================== 博客配置 ====================
-
     @Override
     public List<BlogConfig> config() {
         return blogConfigMapper.selectList(null);
     }
-
-    // ==================== 评论相关 ====================
 
     @Override
     public List<CommentVO> comments(Long articleId) {
@@ -238,13 +228,11 @@ public class BlogServiceImpl implements BlogService {
             userIds.add(comment.getUserId());
         }
         Map<Long, User> userMap = new HashMap<>();
-        if (!userIds.isEmpty()) {
-            LambdaQueryWrapper<User> userWrapper = new LambdaQueryWrapper<>();
-            userWrapper.in(User::getId, userIds);
-            List<User> users = userMapper.selectList(userWrapper);
-            for (User user : users) {
-                userMap.put(user.getId(), user);
-            }
+        LambdaQueryWrapper<User> userWrapper = new LambdaQueryWrapper<>();
+        userWrapper.in(User::getId, userIds);
+        List<User> users = userMapper.selectList(userWrapper);
+        for (User user : users) {
+            userMap.put(user.getId(), user);
         }
 
         // 转换为VO并填充用户信息
@@ -324,8 +312,6 @@ public class BlogServiceImpl implements BlogService {
 
         return CommonConstants.SUCCESS_MESSAGE;
     }
-
-    // ==================== 私有方法 ====================
 
     /**
      * 填充文章VO的关联信息（分类名、作者、标签）
