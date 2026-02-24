@@ -58,11 +58,11 @@ INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `re
 ('system:loginLog:page', '登录日志', 'M', '0', '页面权限', 1),
 ('system:operateLog:page', '操作日志', 'M', '0', '页面权限', 1),
 ('system:file:page', '文件管理', 'M', '0', '页面权限', 1),
--- 通知管理
 ('notification:page', '我的通知', 'M', '0', '页面权限', 1);
 
 INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `remark`, `create_by`) VALUES
 ('blog:article:add:btn', '文章管理-新增(按钮)', 'B', '0', '按钮权限', 1),
+('blog:article:audit:btn', '文章管理-审核(按钮)', 'B', '0', '按钮权限', 1),
 ('blog:article:update:btn', '文章管理-修改(按钮)', 'B', '0', '按钮权限', 1),
 ('blog:article:delete:btn', '文章管理-删除(按钮)', 'B', '0', '按钮权限', 1),
 ('blog:category:add:btn', '分类管理-新增(按钮)', 'B', '0', '按钮权限', 1),
@@ -112,9 +112,7 @@ INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `re
 ('system:file:download:btn', '文件管理-下载(按钮)', 'B', '0', '按钮权限', 1),
 ('system:file:delete:btn', '文件管理-删除(按钮)', 'B', '0', '按钮权限', 1),
 ('system:loginLog:export:btn', '登录日志-导出(按钮)', 'B', '0', '按钮权限', 1),
-('system:operateLog:export:btn', '操作日志-导出(按钮)', 'B', '0', '按钮权限', 1),
--- 文章审核按钮
-('blog:article:audit:btn', '文章管理-审核(按钮)', 'B', '0', '按钮权限', 1);
+('system:operateLog:export:btn', '操作日志-导出(按钮)', 'B', '0', '按钮权限', 1);
 
 INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `remark`, `create_by`) VALUES
 ('blog:article:list', '文章管理-分页列表', 'A', '0', '接口权限', 1),
@@ -202,7 +200,6 @@ INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `re
 ('system:file:uploadPlatform', '文件管理-指定平台上传', 'A', '0', '接口权限', 1),
 ('system:file:delete', '文件管理-删除', 'A', '0', '接口权限', 1),
 ('system:file:presignedUpload', '文件管理-预签名上传URL', 'A', '0', '接口权限', 1),
--- 通知管理 API
 ('notification:list', '通知管理-分页列表', 'A', '0', '接口权限', 1),
 ('notification:unreadCount', '通知管理-未读数量', 'A', '0', '接口权限', 1),
 ('notification:read', '通知管理-标记已读', 'A', '0', '接口权限', 1),
@@ -228,7 +225,6 @@ INSERT INTO `t_menu` (`id`, `menu_code`, `menu_name`, `parent_id`, `order_num`, 
 (21, 'log:login', '登录日志', 20, 1, 'LoginLog', '/log/login', 'M', 'icon-mingdanshujuguanli', 0, '0', 1),
 (22, 'log:operate', '操作日志', 20, 2, 'OperateLog', '/log/operate', 'M', 'icon-lousaojieguobaobiao', 0, '0', 1),
 (25, 'file', '文件管理', 0, 4, 'File', '/file', 'M', 'icon-zuoyejihuafenlei', 0, '0', 1),
--- 通知管理
 (26, 'notification', '我的通知', 0, 5, 'Notification', '/notification', 'M', 'icon-tixing', 0, '0', 1);
 
 INSERT INTO `t_menu_permission` (`menu_id`, `perm_code`) VALUES
@@ -339,15 +335,12 @@ INSERT INTO `t_resource` (`request_method`, `request_uri`, `perm_code`, `status`
 ('POST', '/file/upload/*', 'system:file:uploadPlatform', '0', '文件管理-指定平台上传', 1),
 ('DELETE', '/file/delete', 'system:file:delete', '0', '文件管理-删除', 1),
 ('GET', '/file/presigned-upload-url', 'system:file:presignedUpload', '0', '文件管理-预签名上传URL', 1),
--- 通知管理
 ('GET', '/notification/pageList', 'notification:list', '0', '通知管理-分页列表', 1),
 ('GET', '/notification/unreadCount', 'notification:unreadCount', '0', '通知管理-未读数量', 1),
 ('PUT', '/notification/read/*', 'notification:read', '0', '通知管理-标记已读', 1),
 ('PUT', '/notification/readAll', 'notification:readAll', '0', '通知管理-全部已读', 1);
 
 INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
--- 页面权限 (M)
-(1, 'dashboard:page'),
 (1, 'blog:manage'),
 (1, 'blog:article:page'),
 (1, 'blog:category:page'),
@@ -368,7 +361,6 @@ INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
 (1, 'system:operateLog:page'),
 (1, 'system:file:page'),
 (1, 'notification:page'),
--- 博客按钮权限 (B)
 (1, 'blog:article:add:btn'),
 (1, 'blog:article:update:btn'),
 (1, 'blog:article:delete:btn'),
@@ -506,15 +498,12 @@ INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
 (1, 'system:file:uploadPlatform'),
 (1, 'system:file:delete'),
 (1, 'system:file:presignedUpload'),
--- 通知API权限
 (1, 'notification:list'),
 (1, 'notification:unreadCount'),
 (1, 'notification:read'),
 (1, 'notification:readAll');
 
 INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
--- 页面权限
-(2, 'dashboard:page'),
 (2, 'blog:manage'),
 (2, 'blog:article:page'),
 (2, 'blog:category:page'),
@@ -523,25 +512,14 @@ INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
 (2, 'blog:link:page'),
 (2, 'blog:config:page'),
 (2, 'notification:page'),
--- 博客按钮权限
 (2, 'blog:article:add:btn'),
 (2, 'blog:article:update:btn'),
 (2, 'blog:article:delete:btn'),
 (2, 'blog:category:add:btn'),
 (2, 'blog:category:update:btn'),
-(2, 'blog:category:delete:btn'),
 (2, 'blog:tag:add:btn'),
 (2, 'blog:tag:update:btn'),
-(2, 'blog:tag:delete:btn'),
-(2, 'blog:comment:status:btn'),
-(2, 'blog:comment:delete:btn'),
-(2, 'blog:link:add:btn'),
-(2, 'blog:link:update:btn'),
-(2, 'blog:link:delete:btn'),
-(2, 'blog:config:update:btn'),
-(2, 'blog:config:batchUpdate:btn'),
 (2, 'system:file:upload:btn'),
--- 博客API权限 (全部)
 (2, 'blog:article:list'),
 (2, 'blog:article:detail'),
 (2, 'blog:article:add'),
@@ -551,39 +529,18 @@ INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
 (2, 'blog:category:all'),
 (2, 'blog:category:add'),
 (2, 'blog:category:update'),
-(2, 'blog:category:delete'),
 (2, 'blog:tag:list'),
 (2, 'blog:tag:all'),
 (2, 'blog:tag:add'),
 (2, 'blog:tag:update'),
-(2, 'blog:tag:delete'),
-(2, 'blog:comment:list'),
-(2, 'blog:comment:status'),
-(2, 'blog:comment:delete'),
-(2, 'blog:link:list'),
-(2, 'blog:link:add'),
-(2, 'blog:link:update'),
-(2, 'blog:link:delete'),
-(2, 'blog:config:list'),
-(2, 'blog:config:detail'),
-(2, 'blog:config:update'),
-(2, 'blog:config:batchUpdate'),
-(2, 'dashboard:statistics'),
-(2, 'dashboard:accessTrend'),
--- 文件上传 (写文章需要上传图片)
 (2, 'system:file:upload'),
 (2, 'system:file:download'),
--- 通知权限
 (2, 'notification:list'),
 (2, 'notification:unreadCount'),
 (2, 'notification:read'),
 (2, 'notification:readAll');
 
--- ---- 8.3 普通用户 (role_id=3) -> 仅首页 + 通知 ----
 INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
-(3, 'dashboard:page'),
-(3, 'dashboard:statistics'),
-(3, 'dashboard:accessTrend'),
 (3, 'notification:page'),
 (3, 'notification:list'),
 (3, 'notification:unreadCount'),

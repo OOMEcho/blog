@@ -385,10 +385,6 @@ CREATE TABLE `t_blog_config`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '博客配置表';
 
--- =====================================================
--- 四、站内通知表（新增）
--- =====================================================
-
 DROP TABLE IF EXISTS `t_notification`;
 CREATE TABLE `t_notification`
 (
