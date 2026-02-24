@@ -156,13 +156,6 @@ public class Article implements Serializable {
     private Long viewCount;
 
     /**
-     * 点赞量
-     */
-    @ApiModelProperty("点赞量")
-    @TableField(value = "like_count")
-    private Long likeCount;
-
-    /**
      * 分类名称(非数据库字段)
      */
     @ApiModelProperty("分类名称")

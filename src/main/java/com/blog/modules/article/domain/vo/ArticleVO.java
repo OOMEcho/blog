@@ -54,9 +54,6 @@ public class ArticleVO {
     @ApiModelProperty("浏览量")
     private Long viewCount;
 
-    @ApiModelProperty("点赞量")
-    private Long likeCount;
-
     @ApiModelProperty("作者ID")
     private Long authorId;
 

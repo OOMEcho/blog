@@ -306,7 +306,6 @@ CREATE TABLE `t_article`
     `is_top`      TINYINT         NOT NULL DEFAULT 0 COMMENT '是否置顶(0-否,1-是)',
     `sort`        INT             NOT NULL DEFAULT 0 COMMENT '排序值(越大越靠前)',
     `view_count`  BIGINT          NOT NULL DEFAULT 0 COMMENT '浏览量',
-    `like_count`  BIGINT          NOT NULL DEFAULT 0 COMMENT '点赞数',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX `idx_category_id` (`category_id`),
     INDEX `idx_create_by` (`create_by`),
