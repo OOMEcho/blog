@@ -12,7 +12,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 /**
  * @Author: xuesong.lei
@@ -33,8 +32,8 @@ public class RoleDTO extends PageDTO {
     private String remark;
 
     @ApiModelProperty("角色名称")
-    @NotBlank(groups = {ValidGroup.Create.class, ValidGroup.Update.class}, message = "菜单名称不能为空")
-    @Size(groups = {ValidGroup.Create.class, ValidGroup.Update.class}, max = 32, message = "菜单名称长度不能超过32个字符")
+    @NotBlank(groups = {ValidGroup.Create.class, ValidGroup.Update.class}, message = "角色名称不能为空")
+    @Size(groups = {ValidGroup.Create.class, ValidGroup.Update.class}, max = 32, message = "角色名称长度不能超过32个字符")
     private String roleName;
 
     @ApiModelProperty("角色编码")
@@ -45,16 +44,8 @@ public class RoleDTO extends PageDTO {
     @ApiModelProperty("显示顺序")
     private Integer orderNum;
 
-    @ApiModelProperty("数据范围(1-全部数据权限,2-自定数据权限,3-本部门数据权限,4-本部门及以下数据权限,5-仅本人数据权限)")
-    private String dataScope;
-
-    @ApiModelProperty("部门树选择项是否关联显示")
-    private Integer deptCheckStrictly;
-
     @ApiModelProperty("角色状态(0-正常,1-停用)")
     @EnumString(groups = {ValidGroup.Create.class, ValidGroup.Update.class}, value = {"0", "1"}, message = "状态只允许为0或1")
     private String status;
 
-    @ApiModelProperty("部门组(数据权限)")
-    private List<Long> deptIds;
 }
