@@ -1,9 +1,11 @@
 package com.blog.config.security.handler;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.blog.common.constant.CommonConstants;
 import com.blog.common.constant.RedisConstants;
 import com.blog.common.ip2region.Ip2regionService;
+import com.blog.config.security.LoginSecurityProperties;
 import com.blog.modules.log.domain.entity.SysLoginLog;
 import com.blog.modules.log.mapper.SysLoginLogMapper;
 import com.blog.modules.user.domain.entity.User;
@@ -12,7 +14,6 @@ import com.blog.utils.IpUtils;
 import com.blog.utils.JwtTokenUtil;
 import com.blog.utils.RedisUtils;
 import com.blog.utils.ResponseUtils;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -44,6 +45,8 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
 
     private final RedisUtils redisUtils;
 
+    private final LoginSecurityProperties loginSecurityProperties;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         // 生成token
@@ -71,7 +74,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         Cookie cookie = new Cookie(CommonConstants.REFRESH_TOKEN_COOKIE, tokenResponse.getRefreshToken());
         cookie.setHttpOnly(true);
         cookie.setPath("/api/profile/refreshToken");
-        cookie.setSecure(false); // 如果你本地是 http，可以临时改为 false
+        cookie.setSecure(loginSecurityProperties.isCookieSecure());
         cookie.setMaxAge(Math.toIntExact(jwtTokenUtil.getRefreshTokenExpiration()));
         response.addCookie(cookie);
 

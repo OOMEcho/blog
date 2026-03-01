@@ -2,6 +2,7 @@ package com.blog.modules.user.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -101,6 +102,7 @@ public class User implements Serializable {
     /**
      * 密码
      */
+    @JsonIgnore
     @ApiModelProperty("密码")
     @TableField(value = "password")
     private String password;

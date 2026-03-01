@@ -1,6 +1,8 @@
 package com.blog.modules.common.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.blog.common.constant.CommonConstants;
 import com.blog.common.constant.RedisConstants;
 import com.blog.common.domain.vo.CaptchaVO;
@@ -9,6 +11,7 @@ import com.blog.common.exception.BusinessException;
 import com.blog.common.file.FileStorageServiceFactory;
 import com.blog.common.file.service.FileStorageService;
 import com.blog.common.result.ResultCodeEnum;
+import com.blog.config.security.LoginSecurityProperties;
 import com.blog.modules.common.domain.dto.UserRegisterDTO;
 import com.blog.modules.common.domain.dto.UserUpdateDTO;
 import com.blog.modules.common.service.EmailService;
@@ -26,8 +29,6 @@ import com.blog.modules.user.mapper.UserMapper;
 import com.blog.modules.user.mapper.UserRoleMapper;
 import com.blog.modules.user.service.UserConvert;
 import com.blog.utils.*;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +78,8 @@ public class ProfileServiceImpl implements ProfileService {
     private final DataChangePublisher dataChangePublisher;
 
     private final RedisUtils redisUtils;
+
+    private final LoginSecurityProperties loginSecurityProperties;
 
     @Override
     public CaptchaVO generateCaptcha() {
@@ -129,7 +132,7 @@ public class ProfileServiceImpl implements ProfileService {
         Cookie cookie = new Cookie(CommonConstants.REFRESH_TOKEN_COOKIE, tokenResponse.getRefreshToken());
         cookie.setHttpOnly(true);
         cookie.setPath("/api/profile/refreshToken");
-        cookie.setSecure(false);
+        cookie.setSecure(loginSecurityProperties.isCookieSecure());
         cookie.setMaxAge(Math.toIntExact(jwtTokenUtil.getRefreshTokenExpiration()));
         response.addCookie(cookie);
 
