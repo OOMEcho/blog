@@ -2,6 +2,7 @@ package com.blog.modules.file.controller;
 
 import com.blog.common.duplicate.PreventDuplicateSubmit;
 import com.blog.common.file.StoragePlatform;
+import com.blog.common.limiter.RateLimiter;
 import com.blog.common.log.BusinessType;
 import com.blog.common.log.OperationLog;
 import com.blog.modules.file.domain.entity.FileMetadata;
@@ -35,6 +36,7 @@ public class FileServiceController {
     @ApiOperation("文件上传")
     @PostMapping("/upload")
     @PreventDuplicateSubmit
+    @RateLimiter(time = 60, count = 20)
     @OperationLog(moduleTitle = "文件上传", businessType = BusinessType.IMPORT)
     public FileMetadata uploadFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "directory", required = false) String directory) {
         return fileService.uploadFile(file, directory);
@@ -43,6 +45,7 @@ public class FileServiceController {
     @ApiOperation("批量文件上传")
     @PostMapping("/upload/batch")
     @PreventDuplicateSubmit
+    @RateLimiter(time = 60, count = 10)
     @OperationLog(moduleTitle = "批量文件上传", businessType = BusinessType.IMPORT)
     public List<FileMetadata> uploadBatchFiles(@RequestParam("files") MultipartFile[] files, @RequestParam(value = "directory", required = false) String directory) {
         return fileService.uploadBatchFiles(files, directory);
@@ -75,6 +78,7 @@ public class FileServiceController {
     @ApiOperation("指定存储平台上传文件")
     @PostMapping("/upload/{platform}")
     @PreventDuplicateSubmit
+    @RateLimiter(time = 60, count = 20)
     @OperationLog(moduleTitle = "指定存储平台上传文件", businessType = BusinessType.IMPORT)
     public FileMetadata uploadFileWithPlatform(@PathVariable("platform") StoragePlatform platform, @RequestParam("file") MultipartFile file, @RequestParam(value = "directory", required = false) String directory) {
         return fileService.uploadFileWithPlatform(platform, file, directory);
