@@ -121,8 +121,11 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleConvert.toRole(dto);
 
         // 不能操作超级管理员角色
-        checkIsAdminRole(roleMapper.selectById(role.getId()).getRoleCode());
-
+        Role existingRole = roleMapper.selectById(role.getId());
+        if (existingRole == null) {
+            throw new BusinessException("角色不存在");
+        }
+        checkIsAdminRole(existingRole.getRoleCode());
         // 检查角色名称是否存在
         checkSameRoleName(role);
 
@@ -224,9 +227,10 @@ public class RoleServiceImpl implements RoleService {
     public String assignPermissions(Long roleId, List<String> permCodes) {
         // 不能操作超级管理员角色
         Role role = roleMapper.selectById(roleId);
-        if (role != null) {
-            checkIsAdminRole(role.getRoleCode());
+        if (role == null) {
+            throw new BusinessException("角色不存在");
         }
+        checkIsAdminRole(role.getRoleCode());
 
         // 先删除角色原有权限
         rolePermissionMapper.delete(new LambdaQueryWrapper<RolePermission>().eq(RolePermission::getRoleId, roleId));
