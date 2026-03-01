@@ -20,8 +20,10 @@ CREATE TABLE `t_user`
     `last_login_ip`   VARCHAR(32)              DEFAULT NULL COMMENT '最后登录IP',
     `last_login_time` DATETIME                 DEFAULT NULL COMMENT '最后登录时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE KEY `uk_username` (`username`) USING BTREE,
-    UNIQUE KEY `uk_email` (`email`) USING BTREE
+    UNIQUE KEY `uk_email` (`email`) USING BTREE,
+    INDEX `idx_user_phone` (`phone`),
+    INDEX `idx_user_deleted_create_time` (`deleted`, `create_time`),
+    INDEX `idx_user_create_by` (`create_by`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '用户信息表';
 
@@ -40,7 +42,10 @@ CREATE TABLE `t_role`
     `role_code`   VARCHAR(16)     NOT NULL COMMENT '角色编码',
     `order_num`   INT             NOT NULL DEFAULT 0 COMMENT '显示顺序',
     `status`      CHAR(1)         NOT NULL DEFAULT '0' COMMENT '角色状态(0-正常,1-停用)',
-    PRIMARY KEY (`id`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `idx_role_deleted_status` (`deleted`, `status`),
+    INDEX `idx_role_role_code` (`role_code`),
+    INDEX `idx_role_role_name` (`role_name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '角色信息表';
 
@@ -73,7 +78,8 @@ CREATE TABLE `t_permission`
     `status`      CHAR(1)         NOT NULL DEFAULT '0' COMMENT '状态(0-正常,1-停用)',
     `remark`      VARCHAR(128)             DEFAULT NULL COMMENT '备注',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_perm_code` (`perm_code`)
+    UNIQUE KEY `uk_perm_code` (`perm_code`),
+    INDEX `idx_perm_deleted_status` (`deleted`, `status`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='功能权限表';
 
@@ -84,7 +90,8 @@ CREATE TABLE `t_role_permission`
     `role_id`   BIGINT          NOT NULL COMMENT '角色ID',
     `perm_code` VARCHAR(64)     NOT NULL COMMENT '权限编码',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_role_perm` (`role_id`, `perm_code`)
+    UNIQUE KEY `uk_role_perm` (`role_id`, `perm_code`),
+    INDEX `idx_rp_perm_code` (`perm_code`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='角色与权限关联表';
 
@@ -132,7 +139,8 @@ CREATE TABLE `t_menu`
     `status`      CHAR(1)         NOT NULL DEFAULT '0' COMMENT '菜单状态(0-正常,1-停用)',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE KEY `uk_menu_code` (`menu_code`),
-    UNIQUE KEY `uk_menu_route_name` (`name`)
+    UNIQUE KEY `uk_menu_route_name` (`name`),
+    INDEX `idx_menu_parent_id_order_num` (`parent_id`, `order_num`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '菜单表';
 
@@ -143,7 +151,8 @@ CREATE TABLE `t_menu_permission`
     `menu_id`   BIGINT          NOT NULL COMMENT '菜单ID',
     `perm_code` VARCHAR(64)     NOT NULL COMMENT '权限编码',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_menu_perm` (`menu_id`, `perm_code`)
+    UNIQUE KEY `uk_menu_perm` (`menu_id`, `perm_code`),
+    INDEX `idx_mp_perm_code` (`perm_code`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='菜单与权限关联表';
 
@@ -164,7 +173,8 @@ CREATE TABLE `t_dictionary`
     `dict_label`  VARCHAR(32)     NOT NULL COMMENT '字典标签',
     `dict_value`  VARCHAR(32)     NOT NULL COMMENT '字典键值',
     `status`      CHAR(1)         NOT NULL DEFAULT '0' COMMENT '状态(0-正常,1停用)',
-    PRIMARY KEY (`id`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `idx_dict_dict_type` (`dict_type`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '字典表';
 
@@ -183,7 +193,8 @@ CREATE TABLE `t_whitelist`
     `request_uri`    VARCHAR(255)    NOT NULL COMMENT 'URI匹配模式,支持Ant风格,比如/api/user/**',
     `description`    VARCHAR(128)             DEFAULT NULL COMMENT '描述',
     `status`         CHAR(1)         NOT NULL DEFAULT '0' COMMENT '状态(0-正常,1停用)',
-    PRIMARY KEY (`id`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `idx_whitelist_status` (`status`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '白名单表';
 
@@ -207,7 +218,8 @@ CREATE TABLE `t_sys_operate_log`
     `deplete_time`    BIGINT                   DEFAULT 0 COMMENT '消耗时间(单位：毫秒)',
     `operate_status`  CHAR(1)                  DEFAULT '0' COMMENT '操作状态(0-成功,1-失败)',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX `idx_trace_id` (`trace_id`) USING BTREE COMMENT '链路追踪ID索引'
+    INDEX `idx_trace_id` (`trace_id`) USING BTREE COMMENT '链路追踪ID索引',
+    INDEX `idx_operate_log_operate_time` (`operate_time`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='操作日志表';
 
@@ -223,7 +235,9 @@ CREATE TABLE `t_sys_login_log`
     `login_time`     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '登录时间',
     `login_status`   CHAR(1)         NOT NULL DEFAULT '0' COMMENT '操作状态(0-成功,1-失败)',
     `error_message`  LONGTEXT                 DEFAULT NULL COMMENT '错误响应',
-    PRIMARY KEY (`id`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `idx_login_log_time_status` (`login_time`, `login_status`),
+    INDEX `idx_login_log_login_username` (`login_username`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='登录日志表';
 
@@ -247,7 +261,8 @@ CREATE TABLE `t_file_metadata`
     `platform`           VARCHAR(16)              DEFAULT NULL COMMENT '存储平台',
     `upload_time`        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间',
     `md5`                VARCHAR(64)              DEFAULT NULL COMMENT '文件MD5值',
-    PRIMARY KEY (`id`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `idx_file_file_path` (`file_path`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '文件元数据表';
 
