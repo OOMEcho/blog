@@ -6,7 +6,7 @@ import com.blog.common.log.BusinessType;
 import com.blog.common.log.OperationLog;
 import com.blog.common.validator.ValidGroup;
 import com.blog.modules.resource.domain.dto.ResourceDTO;
-import com.blog.modules.resource.domain.entity.Resource;
+import com.blog.modules.resource.domain.vo.ResourceVO;
 import com.blog.modules.resource.service.ResourceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,16 +29,15 @@ public class ResourceController {
 
     @ApiOperation("分页列表")
     @GetMapping("/pageList")
-    public PageVO<Resource> pageList(ResourceDTO dto) {
+    public PageVO<ResourceVO> pageList(ResourceDTO dto) {
         return resourceService.pageList(dto);
     }
 
     @ApiOperation("详情")
     @GetMapping("/detail/{id}")
-    public Resource detail(@PathVariable("id") Long id) {
+    public ResourceVO detail(@PathVariable("id") Long id) {
         return resourceService.detail(id);
     }
-
     @ApiOperation("删除资源")
     @DeleteMapping("/delete/{id}")
     @PreventDuplicateSubmit

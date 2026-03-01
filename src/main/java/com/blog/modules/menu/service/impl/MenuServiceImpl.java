@@ -1,19 +1,20 @@
 package com.blog.modules.menu.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.blog.common.constant.CommonConstants;
 import com.blog.common.constant.FileConstants;
 import com.blog.common.exception.BusinessException;
 import com.blog.modules.menu.domain.dto.MenuDTO;
 import com.blog.modules.menu.domain.entity.Menu;
 import com.blog.modules.menu.domain.entity.MenuPermission;
+import com.blog.modules.menu.domain.vo.MenuVO;
 import com.blog.modules.menu.mapper.MenuMapper;
 import com.blog.modules.menu.mapper.MenuPermissionMapper;
 import com.blog.modules.menu.service.MenuConvert;
 import com.blog.modules.menu.service.MenuService;
 import com.blog.utils.SecurityUtils;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,7 @@ public class MenuServiceImpl implements MenuService {
     private final MenuConvert menuConvert;
 
     @Override
-    public List<Menu> list(MenuDTO dto) {
+    public List<MenuVO> list(MenuDTO dto) {
         LambdaQueryWrapper<Menu> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.like(ObjectUtils.isNotEmpty(dto.getMenuCode()), Menu::getMenuCode, dto.getMenuCode())
                 .like(StringUtils.isNotBlank(dto.getMenuName()), Menu::getMenuName, dto.getMenuName())
@@ -47,12 +48,14 @@ public class MenuServiceImpl implements MenuService {
                 .eq(StringUtils.isNotBlank(dto.getMenuType()), Menu::getMenuType, dto.getMenuType())
                 .eq(StringUtils.isNotBlank(dto.getStatus()), Menu::getStatus, dto.getStatus())
                 .orderBy(true, true, Menu::getParentId, Menu::getOrderNum);
-        return menuMapper.selectList(queryWrapper);
+        List<Menu> menus = menuMapper.selectList(queryWrapper);
+        return menus.stream().map(menuConvert::toMenuVo).collect(Collectors.toList());
     }
 
     @Override
-    public Menu detail(Long id) {
-        return menuMapper.selectById(id);
+    public MenuVO detail(Long id) {
+        Menu menu = menuMapper.selectById(id);
+        return menuConvert.toMenuVo(menu);
     }
 
     @Override

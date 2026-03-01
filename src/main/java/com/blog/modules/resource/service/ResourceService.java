@@ -2,7 +2,7 @@ package com.blog.modules.resource.service;
 
 import com.blog.common.domain.vo.PageVO;
 import com.blog.modules.resource.domain.dto.ResourceDTO;
-import com.blog.modules.resource.domain.entity.Resource;
+import com.blog.modules.resource.domain.vo.ResourceVO;
 
 /**
  * @Author: xuesong.lei
@@ -14,12 +14,12 @@ public interface ResourceService {
     /**
      * 分页列表
      */
-    PageVO<Resource> pageList(ResourceDTO dto);
+    PageVO<ResourceVO> pageList(ResourceDTO dto);
 
     /**
      * 详情
      */
-    Resource detail(Long id);
+    ResourceVO detail(Long id);
 
     /**
      * 删除

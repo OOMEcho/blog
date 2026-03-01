@@ -1,5 +1,8 @@
 package com.blog.modules.dict.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.blog.common.constant.CommonConstants;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.common.exception.BusinessException;
@@ -8,16 +11,15 @@ import com.blog.modules.dict.domain.entity.Dictionary;
 import com.blog.modules.dict.mapper.DictionaryMapper;
 import com.blog.modules.dict.service.DictionaryConvert;
 import com.blog.modules.dict.service.DictionaryService;
+import com.blog.modules.dict.domain.vo.DictionaryVO;
 import com.blog.utils.PageUtils;
 import com.blog.utils.SecurityUtils;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author: xuesong.lei
@@ -33,7 +35,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     private final DictionaryConvert dictionaryConvert;
 
     @Override
-    public PageVO<Dictionary> pageList(DictionaryDTO dto) {
+    public PageVO<DictionaryVO> pageList(DictionaryDTO dto) {
         LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
 
         queryWrapper.like(StringUtils.isNotBlank(dto.getDictName()), Dictionary::getDictName, dto.getDictName())
@@ -41,7 +43,7 @@ public class DictionaryServiceImpl implements DictionaryService {
                 .like(StringUtils.isNotBlank(dto.getDictLabel()), Dictionary::getDictLabel, dto.getDictLabel())
                 .eq(StringUtils.isNotBlank(dto.getStatus()), Dictionary::getStatus, dto.getStatus());
 
-        return PageUtils.of(dto).paging(dictionaryMapper, queryWrapper);
+        return PageUtils.of(dto).pagingAndConvert(dictionaryMapper, queryWrapper, dictionaryConvert::toDictionaryVo);
     }
 
     @Override
@@ -88,12 +90,14 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
-    public List<Dictionary> list(String dictType) {
+    public List<DictionaryVO> list(String dictType) {
         LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
 
         queryWrapper.eq(Dictionary::getDictType, dictType);
 
-        return dictionaryMapper.selectList(queryWrapper);
+        return dictionaryMapper.selectList(queryWrapper).stream()
+                .map(dictionaryConvert::toDictionaryVo)
+                .collect(Collectors.toList());
     }
 
     private void checkSameDictionary(Dictionary dictionary) {

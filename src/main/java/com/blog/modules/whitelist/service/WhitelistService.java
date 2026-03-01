@@ -2,7 +2,7 @@ package com.blog.modules.whitelist.service;
 
 import com.blog.common.domain.vo.PageVO;
 import com.blog.modules.whitelist.domain.dto.WhitelistDTO;
-import com.blog.modules.whitelist.domain.entity.Whitelist;
+import com.blog.modules.whitelist.domain.vo.WhitelistVO;
 
 /**
  * @Author: xuesong.lei
@@ -17,7 +17,7 @@ public interface WhitelistService {
      * @param dto 查询参数
      * @return 白名单分页列表
      */
-    PageVO<Whitelist> pageList(WhitelistDTO dto);
+    PageVO<WhitelistVO> pageList(WhitelistDTO dto);
 
     /**
      * 详情
@@ -25,7 +25,7 @@ public interface WhitelistService {
      * @param id 白名单ID
      * @return 白名单详情
      */
-    Whitelist detail(Long id);
+    WhitelistVO detail(Long id);
 
     /**
      * 删除白名单

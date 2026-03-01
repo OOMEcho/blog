@@ -1,8 +1,11 @@
 package com.blog.modules.role.service;
 
 import com.blog.common.domain.vo.PageVO;
-import com.blog.modules.role.domain.dto.*;
-import com.blog.modules.role.domain.entity.Role;
+import com.blog.modules.role.domain.dto.CancelAllDTO;
+import com.blog.modules.role.domain.dto.CancelDTO;
+import com.blog.modules.role.domain.dto.RoleDTO;
+import com.blog.modules.role.domain.dto.UserAndRoleQueryDTO;
+import com.blog.modules.role.domain.vo.RoleVO;
 import com.blog.modules.user.domain.vo.UserVO;
 
 import java.util.List;
@@ -20,7 +23,7 @@ public interface RoleService {
      * @param dto 角色DTO
      * @return 角色列表
      */
-    PageVO<Role> pageList(RoleDTO dto);
+    PageVO<RoleVO> pageList(RoleDTO dto);
 
     /**
      * 修改角色状态

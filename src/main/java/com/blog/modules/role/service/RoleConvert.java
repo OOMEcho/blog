@@ -2,6 +2,7 @@ package com.blog.modules.role.service;
 
 import com.blog.modules.role.domain.dto.RoleDTO;
 import com.blog.modules.role.domain.entity.Role;
+import com.blog.modules.role.domain.vo.RoleVO;
 import org.mapstruct.Mapper;
 
 /**
@@ -11,6 +12,8 @@ import org.mapstruct.Mapper;
  */
 @Mapper(componentModel = "spring")
 public interface RoleConvert {
+
+    RoleVO toRoleVo(Role role);
 
     Role toRole(RoleDTO dto);
 }

@@ -6,7 +6,7 @@ import com.blog.common.log.BusinessType;
 import com.blog.common.log.OperationLog;
 import com.blog.common.validator.ValidGroup;
 import com.blog.modules.permission.domain.dto.PermissionDTO;
-import com.blog.modules.permission.domain.entity.Permission;
+import com.blog.modules.permission.domain.vo.PermissionVO;
 import com.blog.modules.permission.service.PermissionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,13 +31,13 @@ public class PermissionController {
 
     @ApiOperation("分页列表")
     @GetMapping("/pageList")
-    public PageVO<Permission> pageList(PermissionDTO dto) {
+    public PageVO<PermissionVO> pageList(PermissionDTO dto) {
         return permissionService.pageList(dto);
     }
 
     @ApiOperation("全部列表")
     @GetMapping("/list")
-    public List<Permission> list(PermissionDTO dto) {
+    public List<PermissionVO> list(PermissionDTO dto) {
         return permissionService.list(dto);
     }
 

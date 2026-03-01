@@ -1,25 +1,24 @@
 package com.blog.modules.whitelist.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.blog.common.constant.CommonConstants;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.common.event.DataChangePublisher;
 import com.blog.common.exception.BusinessException;
 import com.blog.modules.whitelist.domain.dto.WhitelistDTO;
 import com.blog.modules.whitelist.domain.entity.Whitelist;
+import com.blog.modules.whitelist.domain.vo.WhitelistVO;
 import com.blog.modules.whitelist.mapper.WhitelistMapper;
 import com.blog.modules.whitelist.service.WhitelistConvert;
 import com.blog.modules.whitelist.service.WhitelistService;
 import com.blog.utils.PageUtils;
 import com.blog.utils.PathUtil;
 import com.blog.utils.SecurityUtils;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.regex.Pattern;
 
 /**
  * @Author: xuesong.lei
@@ -36,23 +35,20 @@ public class WhitelistServiceImpl implements WhitelistService {
 
     private final WhitelistConvert whitelistConvert;
 
-    // 正则：只允许 / 开头，后面可有字母数字、下划线、横杠、单斜杠，最多允许末尾 /** 前缀
-    private static final Pattern VALID_PATH_PATTERN = Pattern.compile("^(/[a-zA-Z0-9_-]+)*(?:/\\*{2})?$");
-
     @Override
-    public PageVO<Whitelist> pageList(WhitelistDTO dto) {
+    public PageVO<WhitelistVO> pageList(WhitelistDTO dto) {
         LambdaQueryWrapper<Whitelist> queryWrapper = new LambdaQueryWrapper<>();
 
         queryWrapper.eq(StringUtils.isNotBlank(dto.getRequestMethod()), Whitelist::getRequestMethod, dto.getRequestMethod())
                 .eq(StringUtils.isNotBlank(dto.getStatus()), Whitelist::getStatus, dto.getStatus())
                 .like(StringUtils.isNotBlank(dto.getRequestUri()), Whitelist::getRequestUri, dto.getRequestUri());
 
-        return PageUtils.of(dto).paging(whitelistMapper, queryWrapper);
+        return PageUtils.of(dto).pagingAndConvert(whitelistMapper, queryWrapper, whitelistConvert::toWhitelistVo);
     }
 
     @Override
-    public Whitelist detail(Long id) {
-        return whitelistMapper.selectById(id);
+    public WhitelistVO detail(Long id) {
+        return whitelistConvert.toWhitelistVo(whitelistMapper.selectById(id));
     }
 
     @Override

@@ -1,23 +1,25 @@
 package com.blog.modules.permission.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.blog.common.constant.CommonConstants;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.common.exception.BusinessException;
 import com.blog.modules.permission.domain.dto.PermissionDTO;
 import com.blog.modules.permission.domain.entity.Permission;
+import com.blog.modules.permission.domain.vo.PermissionVO;
 import com.blog.modules.permission.mapper.PermissionMapper;
 import com.blog.modules.permission.service.PermissionConvert;
 import com.blog.modules.permission.service.PermissionService;
 import com.blog.utils.PageUtils;
 import com.blog.utils.SecurityUtils;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author: xuesong.lei
@@ -33,15 +35,17 @@ public class PermissionServiceImpl implements PermissionService {
     private final PermissionConvert permissionConvert;
 
     @Override
-    public PageVO<Permission> pageList(PermissionDTO dto) {
+    public PageVO<PermissionVO> pageList(PermissionDTO dto) {
         LambdaQueryWrapper<Permission> queryWrapper = buildQueryWrapper(dto);
-        return PageUtils.of(dto).paging(permissionMapper, queryWrapper);
+        return PageUtils.of(dto).pagingAndConvert(permissionMapper, queryWrapper, permissionConvert::toPermissionVo);
     }
 
     @Override
-    public List<Permission> list(PermissionDTO dto) {
+    public List<PermissionVO> list(PermissionDTO dto) {
         LambdaQueryWrapper<Permission> queryWrapper = buildQueryWrapper(dto);
-        return permissionMapper.selectList(queryWrapper);
+        return permissionMapper.selectList(queryWrapper).stream()
+                .map(permissionConvert::toPermissionVo)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -6,8 +6,8 @@ import com.blog.common.log.BusinessType;
 import com.blog.common.log.OperationLog;
 import com.blog.common.validator.ValidGroup;
 import com.blog.modules.dict.domain.dto.DictionaryDTO;
-import com.blog.modules.dict.domain.entity.Dictionary;
 import com.blog.modules.dict.service.DictionaryService;
+import com.blog.modules.dict.domain.vo.DictionaryVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class DictionaryController {
 
     @ApiOperation("分页列表")
     @GetMapping("/pageList")
-    public PageVO<Dictionary> pageList(DictionaryDTO dto) {
+    public PageVO<DictionaryVO> pageList(DictionaryDTO dto) {
         return dictionaryService.pageList(dto);
     }
 
@@ -61,7 +61,7 @@ public class DictionaryController {
 
     @ApiOperation("根据类型获取字典列表")
     @GetMapping("/list")
-    public List<Dictionary> list(@RequestParam("dictType") String dictType) {
+    public List<DictionaryVO> list(@RequestParam("dictType") String dictType) {
         return dictionaryService.list(dictType);
     }
 }

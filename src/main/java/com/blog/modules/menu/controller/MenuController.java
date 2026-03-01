@@ -5,7 +5,7 @@ import com.blog.common.log.BusinessType;
 import com.blog.common.log.OperationLog;
 import com.blog.common.validator.ValidGroup;
 import com.blog.modules.menu.domain.dto.MenuDTO;
-import com.blog.modules.menu.domain.entity.Menu;
+import com.blog.modules.menu.domain.vo.MenuVO;
 import com.blog.modules.menu.service.MenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,13 +30,13 @@ public class MenuController {
 
     @ApiOperation("列表")
     @GetMapping("/list")
-    public List<Menu> list(MenuDTO dto) {
+    public List<MenuVO> list(MenuDTO dto) {
         return menuService.list(dto);
     }
 
     @ApiOperation("详情")
     @GetMapping("/detail/{id}")
-    public Menu detail(@PathVariable("id") Long id) {
+    public MenuVO detail(@PathVariable("id") Long id) {
         return menuService.detail(id);
     }
 

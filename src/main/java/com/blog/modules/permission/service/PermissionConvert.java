@@ -2,6 +2,7 @@ package com.blog.modules.permission.service;
 
 import com.blog.modules.permission.domain.dto.PermissionDTO;
 import com.blog.modules.permission.domain.entity.Permission;
+import com.blog.modules.permission.domain.vo.PermissionVO;
 import org.mapstruct.Mapper;
 
 /**
@@ -13,4 +14,6 @@ import org.mapstruct.Mapper;
 public interface PermissionConvert {
 
     Permission toPermission(PermissionDTO dto);
+
+    PermissionVO toPermissionVo(Permission permission);
 }

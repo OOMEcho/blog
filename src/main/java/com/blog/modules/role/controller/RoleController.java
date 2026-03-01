@@ -5,8 +5,11 @@ import com.blog.common.duplicate.PreventDuplicateSubmit;
 import com.blog.common.log.BusinessType;
 import com.blog.common.log.OperationLog;
 import com.blog.common.validator.ValidGroup;
-import com.blog.modules.role.domain.dto.*;
-import com.blog.modules.role.domain.entity.Role;
+import com.blog.modules.role.domain.dto.CancelAllDTO;
+import com.blog.modules.role.domain.dto.CancelDTO;
+import com.blog.modules.role.domain.dto.RoleDTO;
+import com.blog.modules.role.domain.dto.UserAndRoleQueryDTO;
+import com.blog.modules.role.domain.vo.RoleVO;
 import com.blog.modules.role.service.RoleService;
 import com.blog.modules.user.domain.vo.UserVO;
 import io.swagger.annotations.Api;
@@ -32,7 +35,7 @@ public class RoleController {
 
     @ApiOperation("分页列表")
     @GetMapping("/pageList")
-    public PageVO<Role> pageList(RoleDTO dto) {
+    public PageVO<RoleVO> pageList(RoleDTO dto) {
         return roleService.pageList(dto);
     }
 
@@ -70,13 +73,13 @@ public class RoleController {
 
     @ApiOperation("查询已分配用户角色列表")
     @GetMapping("/allocatedList")
-    public PageVO<UserVO> allocatedList(UserAndRoleQueryDTO dto) {
+    public PageVO<UserVO> allocatedList(@Validated UserAndRoleQueryDTO dto) {
         return roleService.allocatedList(dto);
     }
 
     @ApiOperation("查询未分配用户角色列表")
     @GetMapping("/unallocatedList")
-    public PageVO<UserVO> unallocatedList(UserAndRoleQueryDTO dto) {
+    public PageVO<UserVO> unallocatedList(@Validated UserAndRoleQueryDTO dto) {
         return roleService.unallocatedList(dto);
     }
 

@@ -1,11 +1,18 @@
 package com.blog.modules.role.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.blog.common.constant.CommonConstants;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.common.exception.BusinessException;
-import com.blog.modules.role.domain.dto.*;
+import com.blog.modules.role.domain.dto.CancelAllDTO;
+import com.blog.modules.role.domain.dto.CancelDTO;
+import com.blog.modules.role.domain.dto.RoleDTO;
+import com.blog.modules.role.domain.dto.UserAndRoleQueryDTO;
 import com.blog.modules.role.domain.entity.Role;
 import com.blog.modules.role.domain.entity.RolePermission;
+import com.blog.modules.role.domain.vo.RoleVO;
 import com.blog.modules.role.mapper.RoleMapper;
 import com.blog.modules.role.mapper.RolePermissionMapper;
 import com.blog.modules.role.service.RoleConvert;
@@ -15,9 +22,6 @@ import com.blog.modules.user.domain.vo.UserVO;
 import com.blog.modules.user.mapper.UserRoleMapper;
 import com.blog.utils.PageUtils;
 import com.blog.utils.SecurityUtils;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +47,7 @@ public class RoleServiceImpl implements RoleService {
     private final RoleConvert roleConvert;
 
     @Override
-    public PageVO<Role> pageList(RoleDTO dto) {
+    public PageVO<RoleVO> pageList(RoleDTO dto) {
         LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
 
         queryWrapper.like(StringUtils.isNotBlank(dto.getRoleName()), Role::getRoleName, dto.getRoleName())
@@ -51,7 +55,7 @@ public class RoleServiceImpl implements RoleService {
                 .eq(StringUtils.isNotBlank(dto.getStatus()), Role::getStatus, dto.getStatus())
                 .orderBy(true, true, Role::getOrderNum);
 
-        return PageUtils.of(dto).paging(roleMapper, queryWrapper);
+        return PageUtils.of(dto).pagingAndConvert(roleMapper, queryWrapper, roleConvert::toRoleVo);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.blog.modules.dict.service;
 
 import com.blog.modules.dict.domain.dto.DictionaryDTO;
 import com.blog.modules.dict.domain.entity.Dictionary;
+import com.blog.modules.dict.domain.vo.DictionaryVO;
 import org.mapstruct.Mapper;
 
 /**
@@ -13,4 +14,6 @@ import org.mapstruct.Mapper;
 public interface DictionaryConvert {
 
     Dictionary toDictionary(DictionaryDTO dto);
+
+    DictionaryVO toDictionaryVo(Dictionary dictionary);
 }
