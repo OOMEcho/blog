@@ -27,6 +27,10 @@ public final class SecurityUtils {
         throw new UnsupportedOperationException("Utility class cannot be instantiated");
     }
 
+    public static boolean isAdmin() {
+        return CommonConstants.SUPER_ADMIN_ID.equals(getUserId());
+    }
+
     public static String getUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getPrincipal() == null) {
