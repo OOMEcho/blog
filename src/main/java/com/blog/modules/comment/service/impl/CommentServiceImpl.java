@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.blog.common.constant.CommonConstants;
+import com.blog.common.exception.BusinessException;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.common.event.DataChangePublisher;
 import com.blog.modules.article.domain.entity.Article;
@@ -62,14 +63,25 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public String updateStatus(Long id, String status) {
+        if (ObjectUtils.isNull(id)) {
+            throw new BusinessException("评论不存在");
+        }
+        if (!"1".equals(status) && !"2".equals(status)) {
+            throw new BusinessException("审核状态不合法，只能为通过(1)或拒绝(2)");
+        }
+
         Comment comment = commentMapper.selectById(id);
+        if (ObjectUtils.isNull(comment)) {
+            throw new BusinessException("评论不存在");
+        }
+        if (!"0".equals(comment.getStatus())) {
+            throw new BusinessException("该评论不是待审核状态，无法审核");
+        }
+
         comment.setStatus(status);
         commentMapper.updateById(comment);
 
-        // 审核通过或拒绝时通知评论者
-        if ("1".equals(status) || "2".equals(status)) {
-            notifyCommenterAuditResult(comment, status);
-        }
+        notifyCommenterAuditResult(comment, status);
 
         return CommonConstants.SUCCESS_MESSAGE;
     }
