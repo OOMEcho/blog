@@ -101,10 +101,17 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String update(ArticleDTO dto) {
+        Article dbArticle = articleMapper.selectById(dto.getId());
+        if (ObjectUtils.isNull(dbArticle)) {
+            throw new BusinessException(ResultCodeEnum.NOT_FOUND);
+        }
+        ensureCanManageArticle(dbArticle);
+
         // 非管理员不允许直接发布，只能保存草稿(0)或提交审核(2)
         enforceArticleStatus(dto.getStatus());
 
         Article article = articleConvert.toArticle(dto);
+        article.setCreateBy(dbArticle.getCreateBy());
         article.setUpdateBy(SecurityUtils.getUserId());
         // XSS防护：标题和摘要转纯文本，内容做白名单清洗
         sanitizeArticle(article);
@@ -123,6 +130,12 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String delete(Long id) {
+        Article dbArticle = articleMapper.selectById(id);
+        if (ObjectUtils.isNull(dbArticle)) {
+            throw new BusinessException(ResultCodeEnum.NOT_FOUND);
+        }
+        ensureCanManageArticle(dbArticle);
+
         articleTagMapper.delete(new LambdaQueryWrapper<ArticleTag>().eq(ArticleTag::getArticleId, id));
 
         articleMapper.deleteById(id);
@@ -263,6 +276,16 @@ public class ArticleServiceImpl implements ArticleService {
     private void enforceArticleStatus(String status) {
         if ("1".equals(status) && !SecurityUtils.isAdmin()) {
             throw new BusinessException("非管理员不能直接发布文章，请提交审核");
+        }
+    }
+
+    private void ensureCanManageArticle(Article article) {
+        if (SecurityUtils.isAdmin()) {
+            return;
+        }
+        Long currentUserId = SecurityUtils.getUserId();
+        if (currentUserId == null || !currentUserId.equals(article.getCreateBy())) {
+            throw new BusinessException("无权限操作该文章");
         }
     }
 
