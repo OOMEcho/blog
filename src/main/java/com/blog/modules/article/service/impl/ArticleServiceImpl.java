@@ -217,7 +217,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (article.getSummary() != null) {
             article.setSummary(HtmlSanitizer.toPlainText(article.getSummary()));
         }
-        article.setContent(HtmlSanitizer.sanitize(article.getContent()));
+        article.setContent(HtmlSanitizer.sanitizeMarkdown(article.getContent()));
     }
 
     @Override
