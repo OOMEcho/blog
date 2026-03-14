@@ -32,19 +32,6 @@ public class BlogConfigController {
         return blogConfigService.list();
     }
 
-    @ApiOperation("根据配置键获取配置值")
-    @GetMapping("/{key}")
-    public String getByKey(@PathVariable("key") String key) {
-        return blogConfigService.getByKey(key);
-    }
-
-    @ApiOperation("更新配置")
-    @PutMapping("/update")
-    @OperationLog(moduleTitle = "更新博客配置", businessType = BusinessType.UPDATE)
-    public String update(@Validated @RequestBody BlogConfigDTO dto) {
-        return blogConfigService.update(dto);
-    }
-
     @ApiOperation("批量更新配置")
     @PutMapping("/batchUpdate")
     @OperationLog(moduleTitle = "批量更新博客配置", businessType = BusinessType.UPDATE)

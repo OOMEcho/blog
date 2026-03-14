@@ -11,7 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: xuesong.lei
@@ -32,40 +35,47 @@ public class BlogConfigServiceImpl implements BlogConfigService {
     }
 
     @Override
-    public String getByKey(String key) {
-        LambdaQueryWrapper<BlogConfig> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(BlogConfig::getConfigKey, key);
-        BlogConfig blogConfig = blogConfigMapper.selectOne(queryWrapper);
-        return blogConfig != null ? blogConfig.getConfigValue() : null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public String update(BlogConfigDTO dto) {
-        LambdaQueryWrapper<BlogConfig> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(BlogConfig::getConfigKey, dto.getConfigKey());
-        BlogConfig blogConfig = blogConfigMapper.selectOne(queryWrapper);
-
-        if (blogConfig != null) {
-            blogConfig.setConfigValue(dto.getConfigValue());
-            blogConfig.setUpdateBy(SecurityUtils.getUserId());
-            blogConfigMapper.updateById(blogConfig);
-        } else {
-            blogConfig = new BlogConfig();
-            blogConfig.setConfigKey(dto.getConfigKey());
-            blogConfig.setConfigValue(dto.getConfigValue());
-            blogConfig.setUpdateBy(SecurityUtils.getUserId());
-            blogConfigMapper.insert(blogConfig);
-        }
-
-        return CommonConstants.SUCCESS_MESSAGE;
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public String batchUpdate(List<BlogConfigDTO> dtoList) {
+        if (dtoList == null || dtoList.isEmpty()) {
+            return CommonConstants.SUCCESS_MESSAGE;
+        }
+
+        Map<String, String> keyValueMap = new LinkedHashMap<>();
         for (BlogConfigDTO dto : dtoList) {
-            update(dto);
+            if (dto == null || dto.getConfigKey() == null || dto.getConfigKey().trim().isEmpty()) {
+                continue;
+            }
+            keyValueMap.put(dto.getConfigKey().trim(), dto.getConfigValue());
+        }
+
+        if (keyValueMap.isEmpty()) {
+            return CommonConstants.SUCCESS_MESSAGE;
+        }
+
+        LambdaQueryWrapper<BlogConfig> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(BlogConfig::getConfigKey, keyValueMap.keySet());
+        List<BlogConfig> existingConfigs = blogConfigMapper.selectList(queryWrapper);
+
+        Map<String, BlogConfig> existingConfigMap = new HashMap<>();
+        for (BlogConfig config : existingConfigs) {
+            existingConfigMap.put(config.getConfigKey(), config);
+        }
+
+        Long userId = SecurityUtils.getUserId();
+        for (Map.Entry<String, String> entry : keyValueMap.entrySet()) {
+            BlogConfig existingConfig = existingConfigMap.get(entry.getKey());
+            if (existingConfig != null) {
+                existingConfig.setConfigValue(entry.getValue());
+                existingConfig.setUpdateBy(userId);
+                blogConfigMapper.updateById(existingConfig);
+            } else {
+                BlogConfig newConfig = new BlogConfig();
+                newConfig.setConfigKey(entry.getKey());
+                newConfig.setConfigValue(entry.getValue());
+                newConfig.setUpdateBy(userId);
+                blogConfigMapper.insert(newConfig);
+            }
         }
         return CommonConstants.SUCCESS_MESSAGE;
     }
