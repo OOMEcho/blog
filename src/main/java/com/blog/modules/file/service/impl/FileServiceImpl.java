@@ -83,13 +83,14 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void download(String filePath, HttpServletResponse response) {
-        FileStorageService storageService = fileStorageServiceFactory.getFileStorageService();
+        FileMetadata fileMetadata = getMetadataByFilePath(filePath);
+        FileStorageService storageService = resolveStorageService(fileMetadata.getPlatform());
 
-        final String fileName = getFileNameByFilePatch(filePath);
+        final String fileName = fileMetadata.getOriginalFileName();
 
         ResponseUtils.setFileDownloadHeader(response, fileName);
 
-        try (InputStream inputStream = storageService.download(filePath);
+        try (InputStream inputStream = storageService.download(fileMetadata.getFilePath());
              ServletOutputStream outputStream = response.getOutputStream()) {
 
             byte[] buffer = new byte[8192];
@@ -132,7 +133,8 @@ public class FileServiceImpl implements FileService {
 
         FileStorageService storageService = fileStorageServiceFactory.getFileStorageService();
 
-        final String fileName = getFileNameByFilePatch(filePath);
+        FileMetadata fileMetadata = getMetadataByFilePath(filePath);
+        final String fileName = fileMetadata.getOriginalFileName();
 
         ResponseUtils.setFileDownloadHeader(response, fileName);
 
@@ -207,15 +209,13 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String deleteFile(String filePath) {
-        FileStorageService storageService = fileStorageServiceFactory.getFileStorageService();
-        storageService.delete(filePath);
+        FileMetadata fileMetadata = getMetadataByFilePath(filePath);
+        FileStorageService storageService = resolveStorageService(fileMetadata.getPlatform());
 
-        // 同步删除文件元数据记录
-        LambdaQueryWrapper<FileMetadata> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(FileMetadata::getFilePath, filePath);
-        fileMetadataMapper.delete(queryWrapper);
+        storageService.delete(fileMetadata.getFilePath());
+        fileMetadataMapper.deleteById(fileMetadata.getId());
 
-        return filePath;
+        return fileMetadata.getFilePath();
     }
 
     @Override
@@ -240,14 +240,15 @@ public class FileServiceImpl implements FileService {
             throw new BusinessException("过期时间不能超过60秒");
         }
 
-        FileStorageService storageService = fileStorageServiceFactory.getFileStorageService();
+        FileMetadata fileMetadata = getMetadataByFilePath(filePath);
+        FileStorageService storageService = resolveStorageService(fileMetadata.getPlatform());
 
-        if (!storageService.exists(filePath)) {
+        if (!storageService.exists(fileMetadata.getFilePath())) {
             throw new BusinessException("文件不存在");
         }
 
         Duration expiration = Duration.ofSeconds(expirationSeconds);
-        String temporaryUrl = storageService.getTemporaryDownloadUrl(filePath, expiration);
+        String temporaryUrl = storageService.getTemporaryDownloadUrl(fileMetadata.getFilePath(), expiration);
 
         Map<String, String> response = new HashMap<>();
         response.put("downloadUrl", temporaryUrl);
@@ -269,14 +270,24 @@ public class FileServiceImpl implements FileService {
                 + FileConstants.getFileFolder() + FileConstants.SEPARATOR + uniqueFileName;
     }
 
-    private String getFileNameByFilePatch(String filePath) {
+    private FileMetadata getMetadataByFilePath(String filePath) {
         LambdaQueryWrapper<FileMetadata> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(FileMetadata::getFilePath, filePath);
         FileMetadata fileMetadata = fileMetadataMapper.selectOne(queryWrapper);
         if (ObjectUtils.isNull(fileMetadata)) {
             throw new BusinessException("文件不存在");
         }
-        return fileMetadata.getOriginalFileName();
+        return fileMetadata;
+    }
+
+    private FileStorageService resolveStorageService(String platform) {
+        StoragePlatform storagePlatform;
+        try {
+            storagePlatform = StoragePlatform.valueOf(platform);
+        } catch (Exception e) {
+            throw new BusinessException("文件存储平台不支持");
+        }
+        return fileStorageServiceFactory.getFileStorageService(storagePlatform);
     }
 
     private void populateAccessUrl(FileMetadata metadata) {
