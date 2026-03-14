@@ -16,40 +16,17 @@
         <result property="roleName" column="role_name"/>
         <result property="roleCode" column="role_code"/>
         <result property="orderNum" column="order_num"/>
-        <result property="dataScope" column="data_scope"/>
-        <result property="deptCheckStrictly" column="dept_check_strictly"/>
         <result property="status" column="status"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,create_by,update_by,create_time,update_time,deleted,
-        version,remark,role_name,role_code,order_num,
-        data_scope,dept_check_strictly,status
+        version,remark,role_name,role_code,order_num,status
     </sql>
-
-    <select id="getCustomDeptIds" resultType="java.lang.Long">
-        SELECT DISTINCT rd.dept_id
-        FROM t_role_dept rd
-                 INNER JOIN t_role r ON rd.role_id = r.id
-                 INNER JOIN t_user_role ur ON r.id = ur.role_id
-        WHERE ur.user_id = #{userId}
-          AND r.data_scope = '2'
-          AND r.deleted = 0
-    </select>
-
-    <select id="getHighestDataScope" resultType="java.lang.String">
-        SELECT MIN(r.data_scope)
-        FROM t_role r
-                 INNER JOIN t_user_role ur ON r.id = ur.role_id
-        WHERE ur.user_id = #{userId}
-          AND r.deleted = 0
-          AND r.status = '0'
-    </select>
 
     <select id="allocatedList" resultType="com.blog.modules.user.domain.vo.UserVO">
         SELECT u.id              AS id,
                u.create_time     AS createTime,
-               u.dept_id         AS deptId,
                u.username        AS username,
                u.nickname        AS nickname,
                u.email           AS email,
@@ -73,7 +50,6 @@
     <select id="unallocatedList" resultType="com.blog.modules.user.domain.vo.UserVO">
         SELECT DISTINCT u.id              AS id,
                         u.create_time     AS createTime,
-                        u.dept_id         AS deptId,
                         u.username        AS username,
                         u.nickname        AS nickname,
                         u.email           AS email,

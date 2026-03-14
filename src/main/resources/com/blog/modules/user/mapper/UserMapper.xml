@@ -13,7 +13,6 @@
         <result property="deleted" column="deleted"/>
         <result property="version" column="version"/>
         <result property="remark" column="remark"/>
-        <result property="deptId" column="dept_id"/>
         <result property="username" column="username"/>
         <result property="password" column="password"/>
         <result property="nickname" column="nickname"/>
@@ -38,7 +37,7 @@
 
     <sql id="Base_Column_List">
         id,create_by,update_by,create_time,update_time,deleted,
-        version,remark,dept_id,username,password,
+        version,remark,username,password,
         nickname,email,sex,phone,avatar,
         status,last_login_ip,last_login_time
     </sql>
