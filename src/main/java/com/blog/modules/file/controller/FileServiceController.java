@@ -75,6 +75,12 @@ public class FileServiceController {
         fileService.localDownload(request, response);
     }
 
+    @ApiOperation("文件公开预览")
+    @GetMapping("/preview/{id}")
+    public void preview(@PathVariable("id") Long id, HttpServletResponse response) {
+        fileService.preview(id, response);
+    }
+
     @ApiOperation("指定存储平台上传文件")
     @PostMapping("/upload/{platform}")
     @PreventDuplicateSubmit

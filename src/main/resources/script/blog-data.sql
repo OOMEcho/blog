@@ -24,6 +24,7 @@ INSERT INTO `t_dictionary` (`id`, `create_by`, `update_by`, `create_time`, `upda
 
 INSERT INTO `t_whitelist` (`create_by`, `update_by`, `create_time`, `update_time`, `deleted`, `version`, `remark`, `request_method`, `request_uri`, `description`, `status`) VALUES
 (NULL, NULL, now(), now(), 0, 1, NULL, 'GET', '/blog/**', '博客前台公开接口', '0'),
+(NULL, NULL, now(), now(), 0, 1, NULL, 'GET', '/file/preview/**', '文件预览公开接口', '0'),
 (NULL, NULL, now(), now(), 0, 1, NULL, 'GET', '/profile/generate/captcha', '获取滑块验证码', '0'),
 (NULL, NULL, now(), now(), 0, 1, NULL, 'GET', '/profile/sendEmailCode', '发送邮箱验证码', '0'),
 (NULL, NULL, now(), now(), 0, 1, NULL, 'GET', '/profile/publicKey', '获取RSA公钥', '0'),
