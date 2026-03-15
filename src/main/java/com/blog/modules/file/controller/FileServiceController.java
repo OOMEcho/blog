@@ -1,16 +1,20 @@
 package com.blog.modules.file.controller;
 
+import com.blog.common.domain.vo.PageVO;
 import com.blog.common.duplicate.PreventDuplicateSubmit;
 import com.blog.common.file.StoragePlatform;
 import com.blog.common.limiter.RateLimiter;
 import com.blog.common.log.BusinessType;
 import com.blog.common.log.OperationLog;
+import com.blog.modules.file.domain.dto.FileMetadataPageDTO;
+import com.blog.modules.file.domain.dto.PresignedUploadCompleteDTO;
 import com.blog.modules.file.domain.entity.FileMetadata;
 import com.blog.modules.file.service.FileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +36,12 @@ import java.util.Map;
 public class FileServiceController {
 
     private final FileService fileService;
+
+    @ApiOperation("文件分页列表")
+    @GetMapping("/pageList")
+    public PageVO<FileMetadata> pageList(FileMetadataPageDTO dto) {
+        return fileService.pageList(dto);
+    }
 
     @ApiOperation("文件上传")
     @PostMapping("/upload")
@@ -59,6 +69,12 @@ public class FileServiceController {
         return fileService.getTemporaryDownloadUrl(filePath, expirationSeconds);
     }
 
+    @ApiOperation("文件公开预览")
+    @GetMapping("/preview/{id}")
+    public void preview(@PathVariable("id") Long id, HttpServletResponse response) {
+        fileService.preview(id, response);
+    }
+
     @ApiOperation("文件下载")
     @GetMapping("/download")
     @PreventDuplicateSubmit
@@ -73,12 +89,6 @@ public class FileServiceController {
     @OperationLog(moduleTitle = "本地文件临时下载", businessType = BusinessType.EXPORT)
     public void localDownload(HttpServletRequest request, HttpServletResponse response) {
         fileService.localDownload(request, response);
-    }
-
-    @ApiOperation("文件公开预览")
-    @GetMapping("/preview/{id}")
-    public void preview(@PathVariable("id") Long id, HttpServletResponse response) {
-        fileService.preview(id, response);
     }
 
     @ApiOperation("指定存储平台上传文件")
@@ -104,5 +114,13 @@ public class FileServiceController {
     @OperationLog(moduleTitle = "获取预签名上传URL", businessType = BusinessType.EXPORT)
     public Map<String, String> getPresignedUploadUrl(@RequestParam String fileName, @RequestParam(required = false) String directory) {
         return fileService.getPresignedUploadUrl(fileName, directory);
+    }
+
+    @ApiOperation("预签名上传完成入库")
+    @PostMapping("/presigned-upload-complete")
+    @PreventDuplicateSubmit
+    @OperationLog(moduleTitle = "预签名上传完成入库", businessType = BusinessType.IMPORT)
+    public FileMetadata presignedUploadComplete(@Validated @RequestBody PresignedUploadCompleteDTO dto) {
+        return fileService.completePresignedUpload(dto);
     }
 }

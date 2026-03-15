@@ -4,18 +4,23 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.blog.common.constant.FileConstants;
+import com.blog.common.domain.vo.PageVO;
 import com.blog.common.exception.BusinessException;
 import com.blog.common.file.FileStorageServiceFactory;
 import com.blog.common.file.StoragePlatform;
 import com.blog.common.file.config.FileUploadProperties;
 import com.blog.common.file.service.FileStorageService;
+import com.blog.modules.file.domain.dto.FileMetadataPageDTO;
+import com.blog.modules.file.domain.dto.PresignedUploadCompleteDTO;
 import com.blog.modules.file.domain.entity.FileMetadata;
 import com.blog.modules.file.mapper.FileMetadataMapper;
 import com.blog.modules.file.service.FileService;
+import com.blog.utils.PageUtils;
 import com.blog.utils.ResponseUtils;
+import com.blog.utils.SecurityUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,6 +59,20 @@ public class FileServiceImpl implements FileService {
     private String secretKey;
 
     @Override
+    public PageVO<FileMetadata> pageList(FileMetadataPageDTO dto) {
+        LambdaQueryWrapper<FileMetadata> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StrUtil.isNotBlank(dto.getOriginalFileName()), FileMetadata::getOriginalFileName, dto.getOriginalFileName())
+                .eq(StrUtil.isNotBlank(dto.getPlatform()), FileMetadata::getPlatform, dto.getPlatform())
+                .like(StrUtil.isNotBlank(dto.getContentType()), FileMetadata::getContentType, dto.getContentType())
+                .orderByDesc(FileMetadata::getUploadTime);
+
+        return PageUtils.of(dto).pagingAndConvert(fileMetadataMapper, queryWrapper, metadata -> {
+            populateAccessUrl(metadata);
+            return metadata;
+        });
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public FileMetadata uploadFile(MultipartFile file, String directory) {
         FileStorageService storageService = fileStorageServiceFactory.getFileStorageService();
@@ -70,13 +86,11 @@ public class FileServiceImpl implements FileService {
     @Transactional(rollbackFor = Exception.class)
     public List<FileMetadata> uploadBatchFiles(MultipartFile[] files, String directory) {
         FileStorageService storageService = fileStorageServiceFactory.getFileStorageService();
-        List<FileMetadata> results = Arrays.stream(files)
-                .map(file -> {
-                    FileMetadata metadata = storageService.upload(file, directory);
-                    populateAccessUrl(metadata);
-                    return metadata;
-                })
-                .collect(Collectors.toList());
+        List<FileMetadata> results = Arrays.stream(files).map(file -> {
+            FileMetadata metadata = storageService.upload(file, directory);
+            populateAccessUrl(metadata);
+            return metadata;
+        }).collect(Collectors.toList());
         log.info("批量文件上传成功，共{}个文件", results.size());
         return results;
     }
@@ -90,8 +104,7 @@ public class FileServiceImpl implements FileService {
 
         ResponseUtils.setFileDownloadHeader(response, fileName);
 
-        try (InputStream inputStream = storageService.download(fileMetadata.getFilePath());
-             ServletOutputStream outputStream = response.getOutputStream()) {
+        try (InputStream inputStream = storageService.download(fileMetadata.getFilePath()); ServletOutputStream outputStream = response.getOutputStream()) {
 
             byte[] buffer = new byte[8192];
             int bytesRead;
@@ -189,8 +202,7 @@ public class FileServiceImpl implements FileService {
         response.setContentType(contentType);
         response.setHeader("Cache-Control", "public, max-age=3600");
 
-        try (InputStream inputStream = storageService.download(fileMetadata.getFilePath());
-             ServletOutputStream outputStream = response.getOutputStream()) {
+        try (InputStream inputStream = storageService.download(fileMetadata.getFilePath()); ServletOutputStream outputStream = response.getOutputStream()) {
 
             byte[] buffer = new byte[8192];
             int bytesRead;
@@ -242,6 +254,51 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public FileMetadata completePresignedUpload(PresignedUploadCompleteDTO dto) {
+        String filePath = dto.getFilePath().trim();
+
+        LambdaQueryWrapper<FileMetadata> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(FileMetadata::getFilePath, filePath);
+        FileMetadata existed = fileMetadataMapper.selectOne(queryWrapper);
+        if (ObjectUtils.isNotNull(existed)) {
+            populateAccessUrl(existed);
+            return existed;
+        }
+
+        FileStorageService storageService = fileStorageServiceFactory.getFileStorageService();
+        if (!storageService.exists(filePath)) {
+            throw new BusinessException("文件不存在或上传未完成");
+        }
+
+        Long fileSize = dto.getFileSize();
+        if (ObjectUtils.isNull(fileSize) || fileSize < 0) {
+            throw new BusinessException("文件大小参数无效");
+        }
+
+        String originalFileName = dto.getOriginalFileName().trim();
+        String suffix = FileUtil.extName(originalFileName);
+        if (StrUtil.isBlank(suffix)) {
+            suffix = FileUtil.extName(filePath);
+        }
+
+        FileMetadata metadata = new FileMetadata()
+                .setCreateBy(SecurityUtils.getUserId())
+                .setFileName(FileUtil.getName(filePath))
+                .setOriginalFileName(originalFileName)
+                .setSuffix(suffix)
+                .setFilePath(filePath)
+                .setFileSize(fileSize)
+                .setContentType(StrUtil.blankToDefault(dto.getContentType(), "application/octet-stream"))
+                .setPlatform(fileUploadProperties.getPlatform().name())
+                .setUploadTime(new Date());
+
+        fileMetadataMapper.insert(metadata);
+        populateAccessUrl(metadata);
+        return metadata;
+    }
+
+    @Override
     public Map<String, String> getTemporaryDownloadUrl(String filePath, long expirationSeconds) {
         if (expirationSeconds > 60) {
             throw new BusinessException("过期时间不能超过60秒");
@@ -268,14 +325,12 @@ public class FileServiceImpl implements FileService {
     private String buildFilePath(String directory, String fileName) {
         if (StrUtil.isNotBlank(directory)) {
             directory = directory.trim();
-            if (directory.contains("..") || directory.contains("\\") ||
-                    !directory.matches("^[a-zA-Z0-9_\\-/]+$")) {
+            if (directory.contains("..") || directory.contains("\\") || !directory.matches("^[a-zA-Z0-9_\\-/]+$")) {
                 throw new BusinessException("目录参数包含非法字符");
             }
         }
         String uniqueFileName = IdUtil.simpleUUID() + FileConstants.POINT + FileUtil.extName(fileName);
-        return (StrUtil.isNotBlank(directory) ? directory + FileConstants.SEPARATOR : "")
-                + FileConstants.getFileFolder() + FileConstants.SEPARATOR + uniqueFileName;
+        return (StrUtil.isNotBlank(directory) ? directory + FileConstants.SEPARATOR : "") + FileConstants.getFileFolder() + FileConstants.SEPARATOR + uniqueFileName;
     }
 
     private FileMetadata getMetadataByFilePath(String filePath) {
