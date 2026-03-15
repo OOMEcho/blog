@@ -302,7 +302,7 @@ INSERT INTO `t_resource` (`request_method`, `request_uri`, `perm_code`, `status`
 ('POST', '/menu/*/permissions', 'system:menu:perm:assign', '0', '菜单管理-配置权限', 1),
 ('GET', '/permissions/pageList', 'system:permission:list', '0', '权限管理-分页列表', 1),
 ('GET', '/permissions/list', 'system:permission:all', '0', '权限管理-全部列表', 1),
-('DELETE', '/permissions/effective/*', 'system:permission:effective', '0', '权限管理-状态修改', 1),
+('PUT', '/permissions/effective/*', 'system:permission:effective', '0', '权限管理-状态修改', 1),
 ('POST', '/permissions/add', 'system:permission:add', '0', '权限管理-新增', 1),
 ('PUT', '/permissions/update', 'system:permission:update', '0', '权限管理-修改', 1),
 ('GET', '/resources/pageList', 'system:resource:list', '0', '资源管理-分页列表', 1),
