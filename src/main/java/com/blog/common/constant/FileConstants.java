@@ -55,6 +55,7 @@ public class FileConstants {
     public static String getFileFolder(){
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
     }
+
     /**
      * 允许的文件类型
      */
