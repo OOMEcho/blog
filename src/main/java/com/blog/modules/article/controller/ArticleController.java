@@ -5,6 +5,7 @@ import com.blog.common.duplicate.PreventDuplicateSubmit;
 import com.blog.common.log.BusinessType;
 import com.blog.common.log.OperationLog;
 import com.blog.common.validator.ValidGroup;
+import com.blog.modules.article.domain.dto.ArticleAuditDTO;
 import com.blog.modules.article.domain.dto.ArticleDTO;
 import com.blog.modules.article.domain.vo.ArticleVO;
 import com.blog.modules.article.service.ArticleService;
@@ -61,9 +62,7 @@ public class ArticleController {
     @PutMapping("/audit/{id}")
     @PreventDuplicateSubmit
     @OperationLog(moduleTitle = "审核文章", businessType = BusinessType.UPDATE)
-    public String audit(@PathVariable("id") Long id,
-                        @RequestParam("status") String status,
-                        @RequestParam(value = "rejectReason", required = false) String rejectReason) {
-        return articleService.audit(id, status, rejectReason);
+    public String audit(@PathVariable("id") Long id, @Validated @RequestBody ArticleAuditDTO dto) {
+        return articleService.audit(id, dto);
     }
 }

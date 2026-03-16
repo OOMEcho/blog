@@ -1,6 +1,7 @@
 package com.blog.modules.article.service;
 
 import com.blog.common.domain.vo.PageVO;
+import com.blog.modules.article.domain.dto.ArticleAuditDTO;
 import com.blog.modules.article.domain.dto.ArticleDTO;
 import com.blog.modules.article.domain.vo.ArticleVO;
 
@@ -46,10 +47,9 @@ public interface ArticleService {
     /**
      * 审核文章
      *
-     * @param id           文章ID
-     * @param status       审核状态(1=通过,3=拒绝)
-     * @param rejectReason 拒绝原因(status=3时填写)
+     * @param id  文章ID
+     * @param dto 审核参数
      * @return 响应消息
      */
-    String audit(Long id, String status, String rejectReason);
+    String audit(Long id, ArticleAuditDTO dto);
 }

@@ -1,8 +1,8 @@
 package com.blog.modules.blog.service;
 
-import com.blog.common.domain.dto.PageDTO;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.modules.article.domain.vo.ArticleVO;
+import com.blog.modules.blog.domain.dto.BlogArticleQueryDTO;
 import com.blog.modules.blogconfig.domain.entity.BlogConfig;
 import com.blog.modules.category.domain.entity.Category;
 import com.blog.modules.link.domain.entity.FriendLink;
@@ -20,7 +20,7 @@ public interface BlogService {
     /**
      * 已发布文章列表（分页）
      */
-    PageVO<ArticleVO> articles(PageDTO pageDTO, Long categoryId, Long tagId, String keyword);
+    PageVO<ArticleVO> articles(BlogArticleQueryDTO dto);
 
     /**
      * 文章详情（含浏览量+1）
@@ -35,7 +35,7 @@ public interface BlogService {
     /**
      * 搜索文章
      */
-    PageVO<ArticleVO> search(PageDTO pageDTO, String keyword);
+    PageVO<ArticleVO> search(BlogArticleQueryDTO dto);
 
     /**
      * 所有分类列表

@@ -8,6 +8,7 @@ import com.blog.common.domain.vo.PageVO;
 import com.blog.common.event.DataChangePublisher;
 import com.blog.common.exception.BusinessException;
 import com.blog.common.result.ResultCodeEnum;
+import com.blog.modules.article.domain.dto.ArticleAuditDTO;
 import com.blog.modules.article.domain.dto.ArticleDTO;
 import com.blog.modules.article.domain.entity.Article;
 import com.blog.modules.article.domain.vo.ArticleVO;
@@ -235,7 +236,10 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String audit(Long id, String status, String rejectReason) {
+    public String audit(Long id, ArticleAuditDTO dto) {
+        String status = dto.getStatus();
+        String rejectReason = dto.getRejectReason();
+
         Article article = articleMapper.selectById(id);
         if (article == null) {
             throw new BusinessException(ResultCodeEnum.NOT_FOUND);
@@ -249,6 +253,10 @@ public class ArticleServiceImpl implements ArticleService {
         // status 只接受 1(通过) 或 3(拒绝)
         if (!"1".equals(status) && !"3".equals(status)) {
             throw new BusinessException("审核状态不合法，只能为通过(1)或拒绝(3)");
+        }
+
+        if ("3".equals(status) && !StringUtils.isNotBlank(rejectReason)) {
+            throw new BusinessException("审核拒绝时请填写拒绝原因");
         }
 
         article.setStatus(status);

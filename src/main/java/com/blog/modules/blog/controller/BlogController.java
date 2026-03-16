@@ -1,8 +1,8 @@
 package com.blog.modules.blog.controller;
 
-import com.blog.common.domain.dto.PageDTO;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.modules.article.domain.vo.ArticleVO;
+import com.blog.modules.blog.domain.dto.BlogArticleQueryDTO;
 import com.blog.modules.blog.service.BlogService;
 import com.blog.modules.blogconfig.domain.entity.BlogConfig;
 import com.blog.modules.category.domain.entity.Category;
@@ -30,11 +30,8 @@ public class BlogController {
 
     @ApiOperation("已发布文章列表(分页)")
     @GetMapping("/articles")
-    public PageVO<ArticleVO> articles(PageDTO pageDTO,
-                                      @RequestParam(required = false) Long categoryId,
-                                      @RequestParam(required = false) Long tagId,
-                                      @RequestParam(required = false) String keyword) {
-        return blogService.articles(pageDTO, categoryId, tagId, keyword);
+    public PageVO<ArticleVO> articles(BlogArticleQueryDTO dto) {
+        return blogService.articles(dto);
     }
 
     @ApiOperation("文章详情")
@@ -51,8 +48,8 @@ public class BlogController {
 
     @ApiOperation("搜索文章")
     @GetMapping("/search")
-    public PageVO<ArticleVO> search(PageDTO pageDTO, @RequestParam(required = false) String keyword) {
-        return blogService.search(pageDTO, keyword);
+    public PageVO<ArticleVO> search(BlogArticleQueryDTO dto) {
+        return blogService.search(dto);
     }
 
     @ApiOperation("所有分类列表")

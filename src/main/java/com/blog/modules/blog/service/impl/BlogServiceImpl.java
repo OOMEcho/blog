@@ -2,7 +2,6 @@ package com.blog.modules.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.blog.common.domain.dto.PageDTO;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.common.exception.BusinessException;
 import com.blog.common.result.ResultCodeEnum;
@@ -10,6 +9,7 @@ import com.blog.modules.article.domain.entity.Article;
 import com.blog.modules.article.domain.vo.ArticleVO;
 import com.blog.modules.article.mapper.ArticleMapper;
 import com.blog.modules.article.service.ArticleConvert;
+import com.blog.modules.blog.domain.dto.BlogArticleQueryDTO;
 import com.blog.modules.blog.service.BlogService;
 import com.blog.modules.blogconfig.domain.entity.BlogConfig;
 import com.blog.modules.blogconfig.mapper.BlogConfigMapper;
@@ -59,7 +59,11 @@ public class BlogServiceImpl implements BlogService {
     private final BlogConfigMapper blogConfigMapper;
 
     @Override
-    public PageVO<ArticleVO> articles(PageDTO pageDTO, Long categoryId, Long tagId, String keyword) {
+    public PageVO<ArticleVO> articles(BlogArticleQueryDTO dto) {
+        Long categoryId = dto.getCategoryId();
+        Long tagId = dto.getTagId();
+        String keyword = dto.getKeyword();
+
         LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Article::getStatus, "1");
 
@@ -82,7 +86,7 @@ public class BlogServiceImpl implements BlogService {
                     .map(ArticleTag::getArticleId)
                     .collect(Collectors.toList());
             if (CollectionUtils.isEmpty(articleIds)) {
-                return new PageVO<>(Collections.emptyList(), 0L, (long) pageDTO.getPageNum(), (long) pageDTO.getPageSize());
+                return new PageVO<>(Collections.emptyList(), 0L, (long) dto.getPageNum(), (long) dto.getPageSize());
             }
             wrapper.in(Article::getId, articleIds);
         }
@@ -92,7 +96,7 @@ public class BlogServiceImpl implements BlogService {
                 .orderByDesc(Article::getSort)
                 .orderByDesc(Article::getCreateTime);
 
-        return PageUtils.of(pageDTO).pagingAndConvert(articleMapper, wrapper, article -> {
+        return PageUtils.of(dto).pagingAndConvert(articleMapper, wrapper, article -> {
             ArticleVO vo = articleConvert.toArticleVo(article);
             enrichArticleVO(vo, article);
             // 列表不返回 content
@@ -139,7 +143,9 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public PageVO<ArticleVO> search(PageDTO pageDTO, String keyword) {
+    public PageVO<ArticleVO> search(BlogArticleQueryDTO dto) {
+        String keyword = dto.getKeyword();
+
         LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Article::getStatus, "1");
 
@@ -153,7 +159,7 @@ public class BlogServiceImpl implements BlogService {
                 .orderByDesc(Article::getSort)
                 .orderByDesc(Article::getCreateTime);
 
-        return PageUtils.of(pageDTO).pagingAndConvert(articleMapper, wrapper, article -> {
+        return PageUtils.of(dto).pagingAndConvert(articleMapper, wrapper, article -> {
             ArticleVO vo = articleConvert.toArticleVo(article);
             enrichArticleVO(vo, article);
             vo.setContent(null);
