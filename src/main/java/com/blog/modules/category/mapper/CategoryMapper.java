@@ -4,6 +4,8 @@ import com.blog.modules.category.domain.entity.Category;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * @Author: xuesong.lei
  * @Date: 2026-02-24 10:00:00
@@ -12,4 +14,9 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface CategoryMapper extends BaseMapper<Category> {
+
+    /**
+     * 查询分类列表(含已发布文章数量)
+     */
+    List<Category> selectListWithArticleCount();
 }

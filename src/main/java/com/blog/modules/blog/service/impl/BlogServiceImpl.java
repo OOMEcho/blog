@@ -169,14 +169,12 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<Category> categories() {
-        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByAsc(Category::getSort);
-        return categoryMapper.selectList(wrapper);
+        return categoryMapper.selectListWithArticleCount();
     }
 
     @Override
     public List<Tag> tags() {
-        return tagMapper.selectList(null);
+        return tagMapper.selectListWithArticleCount();
     }
 
     @Override

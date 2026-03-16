@@ -3,6 +3,7 @@ package com.blog.modules.tag.service;
 import com.blog.modules.tag.domain.dto.TagDTO;
 import com.blog.modules.tag.domain.entity.Tag;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * @Author: xuesong.lei
@@ -12,5 +13,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface TagConvert {
 
+    @Mapping(target = "articleCount", ignore = true)
     Tag toTag(TagDTO dto);
 }

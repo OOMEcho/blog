@@ -15,10 +15,28 @@
         <result property="name" column="name"/>
         <result property="sort" column="sort"/>
         <result property="description" column="description"/>
+        <result property="articleCount" column="article_count"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,create_by,update_by,create_time,update_time,deleted,
         version,name,sort,`description`
     </sql>
+
+    <select id="selectListWithArticleCount" resultMap="BaseResultMap">
+        SELECT c.*,
+               IFNULL(ac.article_count, 0) AS article_count
+        FROM t_category c
+                 LEFT JOIN (
+            SELECT category_id,
+                   COUNT(1) AS article_count
+            FROM t_article
+            WHERE category_id IS NOT NULL
+              AND status = '1'
+              AND deleted = 0
+            GROUP BY category_id
+        ) ac ON ac.category_id = c.id
+        WHERE c.deleted = 0
+        ORDER BY c.sort ASC, c.id ASC
+    </select>
 </mapper>

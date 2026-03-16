@@ -103,4 +103,11 @@ public class Category implements Serializable {
     @ApiModelProperty("描述")
     @TableField(value = "description")
     private String description;
+
+    /**
+     * 文章数量(非数据库字段)
+     */
+    @ApiModelProperty("文章数量")
+    @TableField(exist = false)
+    private Long articleCount;
 }

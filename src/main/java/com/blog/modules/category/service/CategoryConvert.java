@@ -3,6 +3,7 @@ package com.blog.modules.category.service;
 import com.blog.modules.category.domain.dto.CategoryDTO;
 import com.blog.modules.category.domain.entity.Category;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * @Author: xuesong.lei
@@ -12,5 +13,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface CategoryConvert {
 
+    @Mapping(target = "articleCount", ignore = true)
     Category toCategory(CategoryDTO dto);
 }

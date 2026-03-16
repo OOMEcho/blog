@@ -14,6 +14,7 @@
         <result property="version" column="version"/>
         <result property="name" column="name"/>
         <result property="color" column="color"/>
+        <result property="articleCount" column="article_count"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -27,5 +28,23 @@
                  INNER JOIN t_article_tag at ON t.id = at.tag_id
         WHERE at.article_id = #{articleId}
           AND t.deleted = 0
+    </select>
+
+    <select id="selectListWithArticleCount" resultMap="BaseResultMap">
+        SELECT t.*,
+               IFNULL(ac.article_count, 0) AS article_count
+        FROM t_tag t
+                 LEFT JOIN (
+            SELECT at.tag_id,
+                   COUNT(DISTINCT a.id) AS article_count
+            FROM t_article_tag at
+                     INNER JOIN t_article a
+                                ON a.id = at.article_id
+                                    AND a.status = '1'
+                                    AND a.deleted = 0
+            GROUP BY at.tag_id
+        ) ac ON ac.tag_id = t.id
+        WHERE t.deleted = 0
+        ORDER BY t.id ASC
     </select>
 </mapper>

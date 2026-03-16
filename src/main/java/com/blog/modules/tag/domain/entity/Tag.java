@@ -96,4 +96,11 @@ public class Tag implements Serializable {
     @ApiModelProperty("标签颜色")
     @TableField(value = "color")
     private String color;
+
+    /**
+     * 文章数量(非数据库字段)
+     */
+    @ApiModelProperty("文章数量")
+    @TableField(exist = false)
+    private Long articleCount;
 }
