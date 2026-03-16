@@ -2,8 +2,6 @@ package com.blog.modules.common.service.impl;
 
 import com.blog.modules.article.domain.entity.Article;
 import com.blog.modules.article.mapper.ArticleMapper;
-import com.blog.modules.comment.domain.entity.Comment;
-import com.blog.modules.comment.mapper.CommentMapper;
 import com.blog.modules.common.domain.vo.AccessTrendVO;
 import com.blog.modules.common.domain.vo.DashboardVO;
 import com.blog.modules.common.service.DashboardService;
@@ -33,8 +31,6 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final ArticleMapper articleMapper;
 
-    private final CommentMapper commentMapper;
-
     private final SysLoginLogMapper sysLoginLogMapper;
 
     @Override
@@ -55,14 +51,6 @@ public class DashboardServiceImpl implements DashboardService {
         );
         vo.setArticleCount(articleCount);
         vo.setArticleGrowthRate(calculateGrowthRate(articleCount, articleCountBefore));
-
-        // 评论统计
-        Long commentCount = commentMapper.selectCount(null);
-        Long commentCountBefore = commentMapper.selectCount(
-                new LambdaQueryWrapper<Comment>().lt(Comment::getCreateTime, sevenDaysAgo)
-        );
-        vo.setCommentCount(commentCount);
-        vo.setCommentGrowthRate(calculateGrowthRate(commentCount, commentCountBefore));
 
         // 用户统计
         Long userCount = userMapper.selectCount(null);

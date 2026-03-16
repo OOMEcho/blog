@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class NotificationDTO extends PageDTO {
 
-    @ApiModelProperty("通知类型(AUDIT/SYSTEM/COMMENT)")
+    @ApiModelProperty("通知类型(AUDIT/SYSTEM)")
     private NotificationType type;
 
     @ApiModelProperty("是否已读(0-未读,1-已读)")

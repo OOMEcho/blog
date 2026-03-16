@@ -13,8 +13,7 @@ import lombok.Getter;
 public enum NotificationType {
 
     AUDIT("AUDIT", "审核通知"),
-    SYSTEM("SYSTEM", "系统通知"),
-    COMMENT("COMMENT", "评论通知");
+    SYSTEM("SYSTEM", "系统通知");
 
     @EnumValue
     @JsonValue

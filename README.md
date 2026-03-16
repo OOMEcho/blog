@@ -12,12 +12,12 @@
 
 ## 🌟 项目介绍
 
-Blog 是一个面向个人或团队博客的后端服务，基于 Spring Boot + Spring Security + MyBatis-Plus 构建，提供博客前台接口与管理后台接口，涵盖文章、分类、标签、评论、友链、通知、系统权限、日志审计等完整能力，可作为自建博客或内容管理平台的服务端基座。
+Blog 是一个面向个人或团队博客的后端服务，基于 Spring Boot + Spring Security + MyBatis-Plus 构建，提供博客前台接口与管理后台接口，涵盖文章、分类、标签、友链、通知、系统权限、日志审计等完整能力，可作为自建博客或内容管理平台的服务端基座。
 
 ### ✨ 功能亮点
 
-- 📰 **博客前台接口**：已发布文章分页/详情、归档、全文搜索、分类与标签、友情链接、站点配置、树形评论及新增评论。
-- 🖥️ **博客管理后台**：文章生命周期管理（草稿/发布/审核）、分类标签维护、评论审核、友链审核、博客配置维护、通知公告与定时任务。
+- 📰 **博客前台接口**：已发布文章分页/详情、归档、全文搜索、分类与标签、友情链接、站点配置。
+- 🖥️ **博客管理后台**：文章生命周期管理（草稿/发布/审核）、分类标签维护、友链审核、博客配置维护、通知公告与定时任务。
 - 🔐 **系统与权限管理**：用户/角色/权限/菜单/资源/字典/白名单/文件/日志/通知等模块齐全，支持权限编码驱动菜单和接口。
 - 🧱 **平台能力**：JWT 无状态认证、滑块验证码、RSA 密码加密、防重复提交、接口限流、数据脱敏、Excel 导入导出、任务调度、IP 地理识别、操作/登录日志。
 - 🗂️ **多存储文件上传**：可按配置切换 LOCAL、MinIO、阿里云 OSS、腾讯云 COS，支持临时链接、批量上传、下载。
@@ -51,7 +51,7 @@ src/main/java/com/blog
 │   ├── article/                 # 文章管理
 │   ├── blog/                    # 前台接口（文章、分类、标签、友链等）
 │   ├── blogconfig/              # 博客配置
-│   ├── category/ tag/ comment/  # 分类、标签、评论
+│   ├── category/ tag/            # 分类、标签
 │   ├── link/                    # 友情链接
 │   ├── notification/            # 通知公告/定时任务
 │   ├── permission/role/user/... # 系统管理模块
@@ -138,7 +138,7 @@ java -jar target/blog-1.0.0.jar --spring.profiles.active=dev
 
 - 后台 API：`http://localhost:8080`
 - Knife4j 文档：`http://localhost:8080/doc.html`（basic auth：`blog/blog`）
-- 前台开放接口：`/blog/articles`、`/blog/archives`、`/blog/comments/{id}` 等，可参考 `BlogController`。
+- 前台开放接口：`/blog/articles`、`/blog/archives` 等，可参考 `BlogController`。
 
 ## 🐳 Docker 与自动化部署
 

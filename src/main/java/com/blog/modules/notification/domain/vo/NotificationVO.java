@@ -26,7 +26,7 @@ public class NotificationVO {
     @ApiModelProperty("通知内容")
     private String content;
 
-    @ApiModelProperty("通知类型(AUDIT/SYSTEM/COMMENT)")
+    @ApiModelProperty("通知类型(AUDIT/SYSTEM)")
     private NotificationType type;
 
     @ApiModelProperty("关联业务ID")

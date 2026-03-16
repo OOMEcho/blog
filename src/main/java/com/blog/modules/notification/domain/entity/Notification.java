@@ -43,7 +43,7 @@ public class Notification implements Serializable {
     @TableField(value = "content")
     private String content;
 
-    @ApiModelProperty("通知类型(AUDIT-审核,SYSTEM-系统,COMMENT-评论)")
+    @ApiModelProperty("通知类型(AUDIT-审核,SYSTEM-系统)")
     @TableField(value = "type")
     private NotificationType type;
 

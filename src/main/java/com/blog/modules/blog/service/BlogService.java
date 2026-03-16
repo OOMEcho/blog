@@ -5,12 +5,9 @@ import com.blog.common.domain.vo.PageVO;
 import com.blog.modules.article.domain.vo.ArticleVO;
 import com.blog.modules.blogconfig.domain.entity.BlogConfig;
 import com.blog.modules.category.domain.entity.Category;
-import com.blog.modules.comment.domain.dto.CommentDTO;
-import com.blog.modules.comment.domain.vo.CommentVO;
 import com.blog.modules.link.domain.entity.FriendLink;
 import com.blog.modules.tag.domain.entity.Tag;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -59,14 +56,4 @@ public interface BlogService {
      * 博客配置列表
      */
     List<BlogConfig> config();
-
-    /**
-     * 获取文章评论列表（树形）
-     */
-    List<CommentVO> comments(Long articleId);
-
-    /**
-     * 提交评论
-     */
-    String addComment(CommentDTO dto, HttpServletRequest request);
 }

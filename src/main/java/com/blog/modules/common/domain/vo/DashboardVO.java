@@ -19,12 +19,6 @@ public class DashboardVO {
     @ApiModelProperty("文章近7日增长百分比")
     private String articleGrowthRate;
 
-    @ApiModelProperty("评论总数")
-    private Long commentCount;
-
-    @ApiModelProperty("评论近7日增长百分比")
-    private String commentGrowthRate;
-
     @ApiModelProperty("用户总数")
     private Long userCount;
 

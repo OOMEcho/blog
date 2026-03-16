@@ -342,29 +342,6 @@ CREATE TABLE `t_article_tag`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '文章与标签关联表';
 
-DROP TABLE IF EXISTS `t_comment`;
-CREATE TABLE `t_comment`
-(
-    `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-    `create_time` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `deleted`     TINYINT         NOT NULL DEFAULT 0 COMMENT '逻辑删除标记(0=正常,1=删除)',
-    `article_id`  BIGINT          NOT NULL COMMENT '文章ID',
-    `user_id`     BIGINT          NOT NULL COMMENT '评论用户ID',
-    `parent_id`   BIGINT                   DEFAULT NULL COMMENT '父评论ID(为空则是顶级评论)',
-    `reply_to_id` BIGINT                   DEFAULT NULL COMMENT '回复目标评论ID',
-    `content`     VARCHAR(1024)   NOT NULL COMMENT '评论内容',
-    `status`      CHAR(1)         NOT NULL DEFAULT '0' COMMENT '状态(0-待审核,1-已通过,2-已拒绝)',
-    `ip`          VARCHAR(64)              DEFAULT NULL COMMENT '评论者IP',
-    `location`    VARCHAR(128)             DEFAULT NULL COMMENT '评论者地区',
-    `browser`     VARCHAR(64)              DEFAULT NULL COMMENT '浏览器',
-    `os`          VARCHAR(64)              DEFAULT NULL COMMENT '操作系统',
-    PRIMARY KEY (`id`) USING BTREE,
-    INDEX `idx_article_id` (`article_id`),
-    INDEX `idx_user_id` (`user_id`),
-    INDEX `idx_parent_id` (`parent_id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT = '评论表';
-
 DROP TABLE IF EXISTS `t_friend_link`;
 CREATE TABLE `t_friend_link`
 (
@@ -406,7 +383,7 @@ CREATE TABLE `t_notification`
     `user_id`     BIGINT          NOT NULL COMMENT '接收人用户ID',
     `title`       VARCHAR(128)    NOT NULL COMMENT '通知标题',
     `content`     VARCHAR(512)             DEFAULT NULL COMMENT '通知内容',
-    `type`        VARCHAR(16)     NOT NULL COMMENT '通知类型(AUDIT-审核,SYSTEM-系统,COMMENT-评论)',
+    `type`        VARCHAR(16)     NOT NULL COMMENT '通知类型(AUDIT-审核,SYSTEM-系统)',
     `related_id`  BIGINT                   DEFAULT NULL COMMENT '关联业务ID(如文章ID)',
     `is_read`     TINYINT         NOT NULL DEFAULT 0 COMMENT '是否已读(0-未读,1-已读)',
     `create_time` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',

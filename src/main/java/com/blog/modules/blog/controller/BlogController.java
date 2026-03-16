@@ -6,17 +6,13 @@ import com.blog.modules.article.domain.vo.ArticleVO;
 import com.blog.modules.blog.service.BlogService;
 import com.blog.modules.blogconfig.domain.entity.BlogConfig;
 import com.blog.modules.category.domain.entity.Category;
-import com.blog.modules.comment.domain.dto.CommentDTO;
-import com.blog.modules.comment.domain.vo.CommentVO;
 import com.blog.modules.link.domain.entity.FriendLink;
 import com.blog.modules.tag.domain.entity.Tag;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -81,17 +77,5 @@ public class BlogController {
     @GetMapping("/config")
     public List<BlogConfig> config() {
         return blogService.config();
-    }
-
-    @ApiOperation("获取文章评论列表(树形)")
-    @GetMapping("/comments/{articleId}")
-    public List<CommentVO> comments(@PathVariable("articleId") Long articleId) {
-        return blogService.comments(articleId);
-    }
-
-    @ApiOperation("提交评论")
-    @PostMapping("/comments")
-    public String addComment(@Validated @RequestBody CommentDTO dto, HttpServletRequest request) {
-        return blogService.addComment(dto, request);
     }
 }
