@@ -322,6 +322,33 @@ public class FileServiceImpl implements FileService {
         return response;
     }
 
+    @Override
+    public String resolvePublicAccessUrl(String filePath) {
+        if (StrUtil.isBlank(filePath)) {
+            return filePath;
+        }
+
+        String normalized = filePath.trim();
+        String lowerUrl = normalized.toLowerCase();
+        if (lowerUrl.startsWith("http://") || lowerUrl.startsWith("https://")) {
+            return normalized;
+        }
+
+        LambdaQueryWrapper<FileMetadata> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(FileMetadata::getFilePath, normalized);
+        FileMetadata metadata = fileMetadataMapper.selectOne(queryWrapper);
+        if (ObjectUtils.isNull(metadata) || ObjectUtils.isNull(metadata.getId())) {
+            return normalized;
+        }
+
+        try {
+            return buildAccessUrl(metadata.getId());
+        } catch (Exception e) {
+            log.warn("解析文件公开访问URL失败, filePath={}", normalized, e);
+            return normalized;
+        }
+    }
+
     private String buildFilePath(String directory, String fileName) {
         if (StrUtil.isNotBlank(directory)) {
             directory = directory.trim();

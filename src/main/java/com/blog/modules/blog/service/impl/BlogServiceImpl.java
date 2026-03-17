@@ -15,6 +15,7 @@ import com.blog.modules.blogconfig.domain.entity.BlogConfig;
 import com.blog.modules.blogconfig.mapper.BlogConfigMapper;
 import com.blog.modules.category.domain.entity.Category;
 import com.blog.modules.category.mapper.CategoryMapper;
+import com.blog.modules.file.service.FileService;
 import com.blog.modules.link.domain.entity.FriendLink;
 import com.blog.modules.tag.domain.entity.ArticleTag;
 import com.blog.modules.tag.domain.entity.Tag;
@@ -57,6 +58,8 @@ public class BlogServiceImpl implements BlogService {
     private final FriendLinkMapper friendLinkMapper;
 
     private final BlogConfigMapper blogConfigMapper;
+
+    private final FileService fileService;
 
     @Override
     public PageVO<ArticleVO> articles(BlogArticleQueryDTO dto) {
@@ -208,7 +211,7 @@ public class BlogServiceImpl implements BlogService {
             if (author != null) {
                 vo.setAuthorId(author.getId());
                 vo.setAuthorName(author.getNickname());
-                vo.setAuthorAvatar(author.getAvatar());
+                vo.setAuthorAvatar(fileService.resolvePublicAccessUrl(author.getAvatar()));
             }
         }
 

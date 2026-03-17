@@ -17,6 +17,7 @@ import com.blog.modules.article.service.ArticleConvert;
 import com.blog.modules.article.service.ArticleService;
 import com.blog.modules.category.domain.entity.Category;
 import com.blog.modules.category.mapper.CategoryMapper;
+import com.blog.modules.file.service.FileService;
 import com.blog.modules.notification.domain.entity.Notification;
 import com.blog.modules.notification.domain.enums.NotificationType;
 import com.blog.modules.tag.domain.entity.ArticleTag;
@@ -55,6 +56,8 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleTagMapper articleTagMapper;
 
     private final DataChangePublisher dataChangePublisher;
+
+    private final FileService fileService;
 
     @Override
     public PageVO<ArticleVO> pageList(ArticleDTO dto) {
@@ -185,7 +188,7 @@ public class ArticleServiceImpl implements ArticleService {
                 User user = userMapper.selectById(articleVo.getAuthorId());
                 if (ObjectUtils.isNotNull(user)) {
                     articleVo.setAuthorName(user.getNickname());
-                    articleVo.setAuthorAvatar(user.getAvatar());
+                    articleVo.setAuthorAvatar(fileService.resolvePublicAccessUrl(user.getAvatar()));
                 }
             }
 
@@ -212,7 +215,7 @@ public class ArticleServiceImpl implements ArticleService {
             if (ObjectUtils.isNotNull(user)) {
                 articleVo.setAuthorId(user.getId());
                 articleVo.setAuthorName(user.getNickname());
-                articleVo.setAuthorAvatar(user.getAvatar());
+                articleVo.setAuthorAvatar(fileService.resolvePublicAccessUrl(user.getAvatar()));
             }
         }
 
