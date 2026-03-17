@@ -529,8 +529,6 @@ INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
 
 INSERT INTO `t_blog_config` (`config_key`, `config_value`, `description`) VALUES
 ('site_name', '我的博客', '站点名称'),
-('site_description', '一个基于Spring Boot的个人博客系统', '站点描述'),
-('site_author', 'Admin', '站点作者'),
 ('site_avatar', '', '站点头像'),
 ('site_notice', '欢迎访问我的博客！', '站点公告'),
 ('site_about', '<p>欢迎来到我的博客！</p>', '关于页面内容'),
