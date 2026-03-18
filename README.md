@@ -2,88 +2,119 @@
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-1.8+-orange.svg)](https://www.oracle.com/java/technologies/javase-jdk8-downloads.html)
-[![MySQL](https://img.shields.io/badge/MySQL-5.7+-blue.svg)](https://www.mysql.com/)
-[![Redis](https://img.shields.io/badge/Redis-6.0+-red.svg)](https://redis.io/)
+[![MySQL](https://img.shields.io/badge/MySQL-5.7%2B%20%2F%208.0%2B-blue.svg)](https://www.mysql.com/)
+[![Redis](https://img.shields.io/badge/Redis-6.0%2B-red.svg)](https://redis.io/)
+[![MyBatis-Plus](https://img.shields.io/badge/MyBatis--Plus-3.5.12-2b6cb0.svg)](https://baomidou.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.txt)
 
 ## 🍟 如果这个项目对你有帮助，请 Star 支持
 
 </div>
 
-## 🌟 项目介绍
+## 🌟 项目简介
 
-Blog 是一个面向个人或团队博客的后端服务，基于 Spring Boot + Spring Security + MyBatis-Plus 构建，提供博客前台接口与管理后台接口，涵盖文章、分类、标签、友链、通知、系统权限、日志审计等完整能力，可作为自建博客或内容管理平台的服务端基座。
+`blog` 是博客系统的后端服务，基于 Spring Boot + Spring Security + MyBatis-Plus 构建，覆盖博客前台接口和管理后台接口。
 
-### ✨ 功能亮点
+项目提供完整的内容管理、权限管理、文件管理、日志审计和通知能力，可直接作为个人博客或轻量 CMS 的后端基座。
 
-- 📰 **博客前台接口**：已发布文章分页/详情、归档、全文搜索、分类与标签、友情链接、站点配置。
-- 🖥️ **博客管理后台**：文章生命周期管理（草稿/发布/审核）、分类标签维护、友链审核、博客配置维护、通知公告与定时任务。
-- 🔐 **系统与权限管理**：用户/角色/权限/菜单/资源/字典/白名单/文件/日志/通知等模块齐全，支持权限编码驱动菜单和接口。
-- 🧱 **平台能力**：JWT 无状态认证、滑块验证码、RSA 密码加密、防重复提交、接口限流、数据脱敏、Excel 导入导出、任务调度、IP 地理识别、操作/登录日志。
-- 🗂️ **多存储文件上传**：可按配置切换 LOCAL、MinIO、阿里云 OSS、腾讯云 COS，支持临时链接、批量上传、下载。
-- 📚 **开发者友好**：Knife4j API 文档、统一响应格式、MapStruct DTO/VO 映射、HikariCP 性能优化、可插拔配置。
+## 🔗 相关项目
+
+- 后台管理端（Vue2）：<https://github.com/OOMEcho/blog-admin>
+- 博客前台（Vue2）：<https://github.com/OOMEcho/blog-web>
+- 当前仓库（后端）：<https://github.com/OOMEcho/blog>
+
+## 🧭 架构设计
+
+### 1) 系统整体架构
+
+```text
+┌───────────────────────┐      ┌───────────────────────┐
+│ blog-admin (9099)     │      │ blog-web (9088)       │
+│ 后台管理端             │      │ 博客前台               │
+└──────────┬────────────┘      └──────────┬────────────┘
+           │ HTTP /api                     │ HTTP /api
+           └──────────────┬────────────────┘
+                          ▼
+                 ┌──────────────────┐
+                 │ blog-api (9090)  │
+                 │ Spring Boot      │
+                 └───────┬──────────┘
+                         ├───────────────► MySQL
+                         ├───────────────► Redis
+                         └───────────────► 本地/MinIO/OSS/COS
+```
+
+### 2) 后端代码架构
+
+| 层级 | 目录 | 职责 |
+| --- | --- | --- |
+| 接口层 | `modules/**/controller` | 参数校验、接口定义、响应输出 |
+| 业务层 | `modules/**/service` | 业务编排、事务控制、领域规则 |
+| 持久层 | `modules/**/mapper` | MyBatis-Plus 数据访问 |
+| 领域层 | `modules/**/domain` | 实体、DTO、VO、枚举 |
+| 通用层 | `common` | 统一响应、异常、切面、限流、脱敏、日志 |
+| 配置层 | `config` | Security、Redis、MyBatis-Plus、CORS、调度、序列化 |
+
+### 3) 核心业务模块
+
+| 模块 | 说明 |
+| --- | --- |
+| `article` | 文章管理与审核流（草稿/发布/待审核/驳回） |
+| `blog` | 前台公开接口（文章、归档、搜索、分类、标签、友链、配置） |
+| `user/role/menu/permission` | RBAC 体系与菜单权限 |
+| `resource/whitelist` | 动态接口鉴权与白名单放行 |
+| `file` | 文件上传下载、预签名上传、临时下载链接 |
+| `log` | 登录日志、操作日志、导出 |
+| `notification` | 站内通知与定时清理 |
+
+### 4) 认证与鉴权链路
+
+1. `POST /login` 支持账号密码/邮箱验证码两种登录方式。
+2. 登录成功返回 Access Token，并通过 HttpOnly Cookie 下发 Refresh Token。
+3. 访问接口时基于 JWT + 资源权限码 + 角色权限进行动态授权。
+4. `t_whitelist` 命中白名单直接放行，`t_resource` 维护接口到权限码映射。
+
+## ✨ 核心优势
+
+- 安全完整：滑块验证码、RSA 密码加密、双 Token 刷新、黑名单机制。
+- 权限灵活：RBAC + Resource + Whitelist 三层组合，支持动态授权。
+- 业务闭环：文章、分类、标签、友链、通知、日志、文件等模块开箱即用。
+- 存储可扩展：同一套文件接口可切换 LOCAL / MinIO / OSS / COS。
+- 工程化完善：统一返回体、AOP 记录日志、TraceId 链路追踪、可观测日志输出。
 
 ## 🏗️ 技术栈
 
 | 组件 | 版本/说明 |
 | --- | --- |
 | Spring Boot | 2.7.18 |
-| Spring Security | 5.7.x |
+| Spring Security | 5.7.x（自定义过滤器 + 动态权限） |
 | MyBatis-Plus | 3.5.12 |
-| Redis / Lettuce | 缓存、限流、会话控制 |
-| MySQL + HikariCP | 主数据存储、连接池 |
-| MapStruct | DTO/VO 映射 |
-| JWT (jjwt 0.13.0) | 认证、Token 刷新 |
-| Knife4j 4.5.0 | OpenAPI 文档 |
-| Hutool、Jsoup | 工具库/XSS 清理 |
-| FastExcel | Excel 导入导出 |
-| MinIO / OSS / COS SDK | 文件对象存储 |
-| Freemarker | 邮件模版/通知 |
-
-## 📁 目录结构
-
-```
-src/main/java/com/blog
-├── BlogApplication.java         # 启动类
-├── common/                      # 通用组件（结果封装、异常、注解等）
-├── config/                      # 安全、MyBatis-Plus、Knife4j 等配置
-├── modules/
-│   ├── article/                 # 文章管理
-│   ├── blog/                    # 前台接口（文章、分类、标签、友链等）
-│   ├── blogconfig/              # 博客配置
-│   ├── category/ tag/            # 分类、标签
-│   ├── link/                    # 友情链接
-│   ├── notification/            # 通知公告/定时任务
-│   ├── permission/role/user/... # 系统管理模块
-│   └── whitelist/ file/ log/... # 其他支撑模块
-└── utils/                       # 工具类
-
-src/main/resources
-├── application.yml / application-dev.yml
-├── script/blog.sql / blog-data.sql       # 表结构与初始化数据
-├── templates/                            # 邮件模板
-├── static/                               # 静态资源
-└── logback-spring.xml / banner.txt
-```
+| MySQL + HikariCP | 主数据存储 + 连接池 |
+| Redis / Lettuce | 缓存、验证码、限流、Token 状态 |
+| JWT (jjwt) | 0.13.0 |
+| Knife4j | 4.5.0 |
+| MapStruct | 1.6.3 |
+| FastExcel | 1.3.0 |
+| Hutool / Jsoup | 工具库与 XSS 清洗 |
+| Freemarker | 邮件模板渲染 |
 
 ## 🚀 快速开始
 
-### 环境要求
+### 1) 环境准备
 
-- ☕ JDK 1.8+
-- 🗄️ MySQL 5.7+
-- 📦 Redis 6.0+
-- 🔧 Maven 3.6+（或使用仓库自带 `mvnw`）
+- JDK 1.8+
+- Maven 3.6+
+- MySQL 5.7+ 或 8.0+
+- Redis 6.0+
 
-### 1. 克隆与编译
+### 2) 克隆项目
 
 ```bash
 git clone https://github.com/OOMEcho/blog.git
 cd blog
-# 可选：./mvnw clean compile
 ```
 
-### 2. 初始化数据库
+### 3) 初始化数据库
 
 ```bash
 mysql -u root -p -e "CREATE DATABASE blog DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
@@ -91,13 +122,16 @@ mysql -u root -p blog < src/main/resources/script/blog.sql
 mysql -u root -p blog < src/main/resources/script/blog-data.sql
 ```
 
-默认会创建管理员账号 `admin / 123456` 以及基础权限、白名单、字典数据。
+默认初始化数据包含管理员账号：`admin / 123456`（请上线前修改）。
 
-### 3. 修改配置
+### 4) 修改配置
 
-编辑 `src/main/resources/application.yml`，根据环境调整：
+编辑 `src/main/resources/application.yml`（或新增外部配置覆盖）：
 
 ```yaml
+server:
+  port: 9090
+
 spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/blog?serverTimezone=Asia/Shanghai&useSSL=false
@@ -107,145 +141,132 @@ spring:
     host: 127.0.0.1
     port: 6379
     password: your_redis_password
-  mail:
-    host: smtp.163.com
-    username: blog_system@163.com
-    password: your_mail_authorization_code
+
+jwt:
+  secret: your_jwt_secret
 
 file:
   upload:
-    platform: LOCAL   # LOCAL / MINIO / ALIYUN_OSS / TENCENT_COS
-jwt:
-  secret: change_me_to_a_long_random_string
-knife4j:
-  basic:
-    username: blog
-    password: blog
+    platform: LOCAL
+    public-base-url: http://127.0.0.1:9090
+
+security:
+  login:
+    enable-captcha: true
+    enable-password-encryption: true
+    cookie-path: /api/profile/refreshToken
 ```
 
-### 4. 启动服务
+说明：
+
+- 管理端/前台走 `/api` 前缀代理时，`cookie-path` 建议为 `/api/profile/refreshToken`。
+- 直连后端（无 `/api` 前缀）时，`cookie-path` 建议改为 `/profile/refreshToken`。
+
+### 5) 启动服务
 
 ```bash
-# 开发环境（默认 8080）
-./mvnw spring-boot:run
+# 开发启动
+mvn spring-boot:run
 
 # 或打包运行
-./mvnw clean package -Dmaven.test.skip=true
+mvn clean package -Dmaven.test.skip=true
 java -jar target/blog-1.0.0.jar --spring.profiles.active=dev
 ```
 
-### 5. 访问接口
+### 6) 启动后验证
 
-- 后台 API：`http://localhost:8080`
-- Knife4j 文档：`http://localhost:8080/doc.html`（basic auth：`blog/blog`）
-- 前台开放接口：`/blog/articles`、`/blog/archives` 等，可参考 `BlogController`。
+- 服务地址：`http://127.0.0.1:9090`
+- API 文档：`http://127.0.0.1:9090/doc.html`
+- 文档账号（默认）：`blog / blog`
+- 前台公开接口自检：`GET /blog/config`、`GET /blog/articles`
 
-## 🐳 Docker 与自动化部署
+## 🌐 部署说明
 
-### 使用 Dockerfile
+### 1) JAR 部署
 
 ```bash
-# 先打包
-./mvnw clean package -Dmaven.test.skip=true
+mvn clean package -Dmaven.test.skip=true
+java -jar target/blog-1.0.0.jar --spring.profiles.active=prod
+```
 
-# 构建镜像
-docker build -t blog-backend .
+### 2) Docker 部署
 
-# 运行容器（默认暴露 9090，prod 配置）
-docker run -d \
+```bash
+mvn clean package -Dmaven.test.skip=true
+docker build -t blog .
+
+docker run -d --restart=always \
   --name blog \
   -p 9090:9090 \
   -v /home/blog/config:/blog/config \
   -v /home/blog/logs:/blog/logs \
-  blog-backend
+  blog
 ```
 
-### Jenkins 脚本（`build.sh`）
+如果你使用外部配置，建议在 `/home/blog/config` 放置 `application-prod.yml`。
 
-脚本完成以下步骤：Maven 打包 → 停止并删除旧容器 → 删除旧镜像 → 重新构建镜像 → 挂载配置/日志目录并以 `9090` 端口运行。可直接在 CI 中调用。
+### 3) 反向代理（可选）
 
-## ⚙️ 配置说明
+```nginx
+server {
+  listen 80;
+  server_name api.yourblog.cn;
 
-`application.yml` 中常见可调项：
+  location / {
+    proxy_pass http://127.0.0.1:9090;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+}
+```
 
-- **数据库与连接池**：`spring.datasource.*`，已启用 HikariCP 池化与连接泄漏检测。
-- **Redis**：`spring.redis.*`，用于缓存、限流、验证码、Token 黑名单。
-- **邮件**：`spring.mail.*`，支持 SSL、超时控制和 Freemarker 模版。
-- **文件上传**：`file.upload.platform` (LOCAL/MINIO/ALIYUN_OSS/TENCENT_COS) 以及对应参数。
-- **JWT**：`jwt.secret / access-token-expiration / refresh-token-expiration`。
-- **安全登录**：`security.login.enable-captcha` 控制滑块验证码，`enable-password-encryption` 控制 RSA 加密。
-- **Knife4j**：`knife4j.enable`、`knife4j.basic.*` 控制文档开关与访问凭证。
-- **任务调度**：`task.scheduling.enabled` 控制通知等定时任务。
-- **CORS**：`cors.allowed-origins` 指定允许的前端域名。
-- **日志**：`logging.file.path=./logs`，可挂载至宿主机。
-
-## 📚 API 文档
-
-- 访问地址：`http://localhost:8080/doc.html`
-- 认证方式：Basic Auth（默认 `blog/blog`）
-- 文档内容：接口分组、参数、响应示例、在线调试、示例代码。
-
-## 🧪 测试
+## 🧩 三端联调
 
 ```bash
-./mvnw test
-./mvnw test -Dtest=UserServiceTest
-./mvnw test jacoco:report  # 如需覆盖率
+# 1) 启动后端
+cd D:\Project\OtherProjects\blog
+mvn spring-boot:run
+
+# 2) 启动后台管理端
+cd D:\Project\FrontEndProjects\blog-admin
+npm install
+npm run serve
+
+# 3) 启动博客前台
+cd D:\Project\FrontEndProjects\blog-web
+npm install
+npm run serve
 ```
 
-## 📦 部署建议
+默认本地端口：
 
-1. `./mvnw clean package -Dmaven.test.skip=true`
-2. 创建 `application-prod.yml` 或通过环境变量覆盖敏感配置
-3. 关闭生产 Knife4j：`knife4j.enable=false`
-4. 设置日志级别：`logging.level.com.blog=INFO`
-5. 以 `java -jar target/blog-1.0.0.jar --spring.profiles.active=prod` 或 Docker 方式启动
+- 后端：`9090`
+- 管理端：`9099`
+- 前台：`9088`
 
-## 🤝 贡献指南
+## 🖼️ 接口预览
 
-1. Fork 仓库
-2. 创建特性分支 `git checkout -b feature/xxx`
-3. 开发 & 添加必要测试
-4. `git commit -m "feat: xxx"`
-5. `git push` 并提交 Pull Request
-
-欢迎 issue/PR，一起完善博客系统。
-
-## 📄 许可证
-
-本项目基于 [MIT License](LICENSE.txt) 开源，可自由使用、修改与分发，但需保留版权声明。
+- Knife4j 文档：`/doc.html`
+- 推荐在部署完成后录入你自己的接口截图或演示链接。
 
 ## ❓ 常见问题
 
-<details>
-<summary>如何修改默认管理员账号？</summary>
-修改 `t_user` 表的默认记录或通过后台创建新管理员，并更新 `t_user_role` 关联。
-</details>
+1. 登录成功但很快 401：检查前端是否带 `/api` 前缀，并核对 `security.login.cookie-path`。
+2. 邮件验证码发送失败：检查 `spring.mail.*` 配置与邮箱授权码。
+3. 跨域报错：检查 `cors.allowed-origins` 是否包含前端域名。
+4. 文件无法访问：检查 `file.upload.public-base-url` 与存储平台配置是否一致。
 
-<details>
-<summary>无法发送邮件怎么办？</summary>
-确认 SMTP 地址、端口、授权码正确，并检查是否启用 SSL (`spring.mail.properties.mail.smtp.ssl.enable=true`)。
-</details>
+## 🤝 贡献
 
-<details>
-<summary>如何切换文件存储平台？</summary>
-调整 `file.upload.platform`，并完善对应平台的 endpoint/key/bucket 配置，重启服务生效。
-</details>
+1. Fork 仓库
+2. 创建分支：`git checkout -b feature/xxx`
+3. 提交代码：`git commit -m "feat: xxx"`
+4. 发起 Pull Request
 
-<details>
-<summary>如何访问博客前台接口？</summary>
-直接调用 `/blog/**` 接口（见 `BlogController`），默认已在白名单(`t_whitelist`)内，无需 Token。
-</details>
+## 📄 许可证
 
-<details>
-<summary>如何启用/关闭限流与验证码？</summary>
-`@RateLimiter` 注解用于接口层限流；`security.login.enable-captcha` 控制滑块验证码开关。
-</details>
-
-## 📞 支持
-
-- 邮件：228389787@qq.com
-- Issues：https://github.com/OOMEcho/blog/issues
+本项目基于 [MIT License](LICENSE.txt) 开源。
 
 ---
 
