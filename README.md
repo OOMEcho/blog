@@ -71,12 +71,12 @@
 
 1. `POST /login` 支持账号密码/邮箱验证码两种登录方式。
 2. 登录成功返回 Access Token，并通过 HttpOnly Cookie 下发 Refresh Token。
-3. 访问接口时基于 JWT + 资源权限码 + 角色权限进行动态授权。
+3. 访问接口时基于 Token + 资源权限码 + 角色权限进行动态授权。
 4. `t_whitelist` 命中白名单直接放行，`t_resource` 维护接口到权限码映射。
 
 ## ✨ 核心优势
 
-- 安全完整：滑块验证码、RSA 密码加密、双 Token 刷新、黑名单机制。
+- 安全完整：滑块验证码、RSA 密码加密、双 Token 刷新、即时失效机制。
 - 权限灵活：RBAC + Resource + Whitelist 三层组合，支持动态授权。
 - 业务闭环：文章、分类、标签、友链、通知、日志、文件等模块开箱即用。
 - 存储可扩展：同一套文件接口可切换 LOCAL / MinIO / OSS / COS。
@@ -90,8 +90,7 @@
 | Spring Security | 5.7.x（自定义过滤器 + 动态权限） |
 | MyBatis-Plus | 3.5.12 |
 | MySQL + HikariCP | 主数据存储 + 连接池 |
-| Redis / Lettuce | 缓存、验证码、限流、Token 状态 |
-| JWT (jjwt) | 0.13.0 |
+| Redis / Lettuce | 缓存、验证码、限流、Token 会话 |
 | Knife4j | 4.5.0 |
 | MapStruct | 1.6.3 |
 | FastExcel | 1.3.0 |
@@ -141,9 +140,6 @@ spring:
     host: 127.0.0.1
     port: 6379
     password: your_redis_password
-
-jwt:
-  secret: your_jwt_secret
 
 file:
   upload:

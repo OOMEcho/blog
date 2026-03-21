@@ -1,9 +1,7 @@
 package com.blog.config.security.handler;
 
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.blog.common.constant.CommonConstants;
-import com.blog.common.constant.RedisConstants;
 import com.blog.common.ip2region.Ip2regionService;
 import com.blog.config.security.LoginSecurityProperties;
 import com.blog.modules.log.domain.entity.SysLoginLog;
@@ -11,9 +9,8 @@ import com.blog.modules.log.mapper.SysLoginLogMapper;
 import com.blog.modules.user.domain.entity.User;
 import com.blog.modules.user.mapper.UserMapper;
 import com.blog.utils.IpUtils;
-import com.blog.utils.JwtTokenUtil;
-import com.blog.utils.RedisUtils;
 import com.blog.utils.ResponseUtils;
+import com.blog.utils.TokenService;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -24,7 +21,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: xuesong.lei
@@ -35,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final JwtTokenUtil jwtTokenUtil;
+    private final TokenService tokenService;
 
     private final Ip2regionService ip2regionService;
 
@@ -43,39 +39,24 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
 
     private final UserMapper userMapper;
 
-    private final RedisUtils redisUtils;
-
     private final LoginSecurityProperties loginSecurityProperties;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        // 生成token
-        JwtTokenUtil.TokenResponse tokenResponse = jwtTokenUtil.generateTokenResponse(authentication);
-
         String username = authentication.getName();
-        String accessKey = RedisConstants.USER_TOKEN_JTI + username;
-        String oldJti = redisUtils.get(accessKey);
-        if (StrUtil.isNotBlank(oldJti)) {
-            long oldExpireSeconds = redisUtils.getExpire(accessKey, TimeUnit.SECONDS);
-            if (oldExpireSeconds > 0) {
-                redisUtils.set(RedisConstants.BLACKLIST_TOKEN + oldJti, "logout", oldExpireSeconds, TimeUnit.SECONDS);
-            }
-        }
 
-        String accessJti = jwtTokenUtil.getJti(tokenResponse.getAccessToken());
-        Long accessExpireSeconds = jwtTokenUtil.getAccessTokenExpireSeconds(tokenResponse.getAccessToken());
-        redisUtils.set(accessKey, accessJti, accessExpireSeconds, TimeUnit.SECONDS);
+        // 使旧 session 立即失效（单设备登录控制）
+        tokenService.invalidateSession(username);
 
-        String refreshKey = RedisConstants.USER_REFRESH_JTI + username;
-        String refreshJti = jwtTokenUtil.getJti(tokenResponse.getRefreshToken());
-        redisUtils.set(refreshKey, refreshJti, jwtTokenUtil.getRefreshTokenExpiration(), TimeUnit.SECONDS);
+        // 创建新 session
+        TokenService.TokenResponse tokenResponse = tokenService.createSession(authentication);
 
-        // 将refreshToken放入HttpOnly的Cookie中
+        // 将 refreshToken 放入 HttpOnly 的 Cookie 中
         Cookie cookie = new Cookie(CommonConstants.REFRESH_TOKEN_COOKIE, tokenResponse.getRefreshToken());
         cookie.setHttpOnly(true);
         cookie.setPath(loginSecurityProperties.getCookiePath());
         cookie.setSecure(loginSecurityProperties.isCookieSecure());
-        cookie.setMaxAge(Math.toIntExact(jwtTokenUtil.getRefreshTokenExpiration()));
+        cookie.setMaxAge(Math.toIntExact(tokenService.getRefreshExpiration()));
         response.addCookie(cookie);
 
         // 记录登录日志
