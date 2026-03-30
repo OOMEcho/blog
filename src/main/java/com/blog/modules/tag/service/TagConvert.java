@@ -6,9 +6,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 标签实体类转换
+ * 标签实体类转换
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 @Mapper(componentModel = "spring")
 public interface TagConvert {

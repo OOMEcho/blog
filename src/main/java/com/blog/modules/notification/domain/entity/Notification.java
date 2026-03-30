@@ -13,9 +13,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24
- * @Description: 站内通知表
+ * 站内通知表
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24
  * @TableName t_notification
  */
 @Data

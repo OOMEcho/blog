@@ -8,9 +8,10 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 针对表【t_tag(标签表)】的数据库操作Mapper
+ * 针对表【t_tag(标签表)】的数据库操作Mapper
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  * @Entity: com.blog.modules.tag.domain.entity.Tag
  */
 @Mapper

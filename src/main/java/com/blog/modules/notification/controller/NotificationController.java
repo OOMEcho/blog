@@ -10,9 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24
- * @Description: 站内通知接口
+ * 站内通知接口
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24
  */
 @RestController
 @Api(tags = "站内通知接口")

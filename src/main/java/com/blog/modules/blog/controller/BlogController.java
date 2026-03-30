@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 博客前台接口
+ * 博客前台接口
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 @RestController
 @Api(tags = "博客前台接口")

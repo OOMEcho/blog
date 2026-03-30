@@ -6,9 +6,10 @@ import com.blog.modules.notification.domain.entity.Notification;
 import com.blog.modules.notification.domain.vo.NotificationVO;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24
- * @Description: 通知业务层
+ * 通知业务层
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24
  */
 public interface NotificationService {
 

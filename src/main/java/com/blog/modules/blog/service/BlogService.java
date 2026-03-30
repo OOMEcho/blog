@@ -11,9 +11,10 @@ import com.blog.modules.tag.domain.entity.Tag;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24
- * @Description: 博客前台业务接口
+ * 博客前台业务接口
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24
  */
 public interface BlogService {
 

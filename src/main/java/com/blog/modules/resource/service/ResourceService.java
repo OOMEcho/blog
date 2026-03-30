@@ -5,9 +5,10 @@ import com.blog.modules.resource.domain.dto.ResourceDTO;
 import com.blog.modules.resource.domain.vo.ResourceVO;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026/1/12 23:16
- * @Description: 资源业务层
+ * 资源业务层
+ *
+ * @author xuesong.lei
+ * @since 2026/1/12 23:16
  */
 public interface ResourceService {
 

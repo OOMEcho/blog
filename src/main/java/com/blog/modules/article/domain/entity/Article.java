@@ -15,9 +15,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 文章表
+ * 文章表
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  * @TableName t_article
  */
 @Data

@@ -7,9 +7,10 @@ import com.blog.modules.category.domain.entity.Category;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 分类业务层
+ * 分类业务层
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 public interface CategoryService {
 

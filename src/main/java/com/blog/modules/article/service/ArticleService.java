@@ -6,9 +6,10 @@ import com.blog.modules.article.domain.dto.ArticleDTO;
 import com.blog.modules.article.domain.vo.ArticleVO;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 文章业务层
+ * 文章业务层
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 public interface ArticleService {
 

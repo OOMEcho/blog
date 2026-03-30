@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 分类管理接口
+ * 分类管理接口
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 @RestController
 @Api(tags = "分类管理接口")

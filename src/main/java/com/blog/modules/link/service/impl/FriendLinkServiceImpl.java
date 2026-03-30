@@ -18,9 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 友情链接业务实现层
+ * 友情链接业务实现层
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 @Service
 @RequiredArgsConstructor

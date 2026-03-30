@@ -10,9 +10,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 文章VO
+ * 文章VO
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 @Data
 @ApiModel("文章VO")

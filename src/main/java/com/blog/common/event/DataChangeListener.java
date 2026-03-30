@@ -21,9 +21,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2025/09/07 16:24
- * @Description: 数据变更监听器
+ * 数据变更监听器
+ *
+ * @author xuesong.lei
+ * @since 2025/09/07 16:24
  */
 @Slf4j
 @Component

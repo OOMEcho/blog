@@ -7,9 +7,10 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 针对表【t_category(分类表)】的数据库操作Mapper
+ * 针对表【t_category(分类表)】的数据库操作Mapper
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  * @Entity: com.blog.modules.category.domain.entity.Category
  */
 @Mapper

@@ -13,9 +13,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 分类表
+ * 分类表
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  * @TableName t_category
  */
 @Data

@@ -17,9 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 博客配置业务实现层
+ * 博客配置业务实现层
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 @Service
 @RequiredArgsConstructor

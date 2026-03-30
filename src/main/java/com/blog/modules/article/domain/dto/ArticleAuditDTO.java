@@ -8,9 +8,10 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-03-16
- * @Description: 文章审核DTO
+ * 文章审核DTO
+ *
+ * @author xuesong.lei
+ * @since 2026-03-16
  */
 @Data
 @ApiModel("文章审核DTO")

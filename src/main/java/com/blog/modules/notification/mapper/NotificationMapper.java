@@ -5,9 +5,10 @@ import com.blog.modules.notification.domain.entity.Notification;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24
- * @Description: 通知Mapper
+ * 通知Mapper
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24
  */
 @Mapper
 public interface NotificationMapper extends BaseMapper<Notification> {

@@ -8,9 +8,10 @@ import org.mapstruct.MappingConstants;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24
- * @Description: 通知对象转换器
+ * 通知对象转换器
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24
  */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface NotificationConvert {

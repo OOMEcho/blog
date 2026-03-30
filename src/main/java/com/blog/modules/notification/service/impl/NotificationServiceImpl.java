@@ -19,9 +19,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24
- * @Description: 通知业务实现层
+ * 通知业务实现层
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24
  */
 @Service
 @RequiredArgsConstructor

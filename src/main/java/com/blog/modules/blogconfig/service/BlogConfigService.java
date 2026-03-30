@@ -6,9 +6,10 @@ import com.blog.modules.blogconfig.domain.entity.BlogConfig;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 博客配置业务层
+ * 博客配置业务层
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 public interface BlogConfigService {
 

@@ -5,9 +5,10 @@ import com.blog.modules.link.domain.entity.FriendLink;
 import org.mapstruct.Mapper;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 友情链接实体类转换
+ * 友情链接实体类转换
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 @Mapper(componentModel = "spring")
 public interface FriendLinkConvert {

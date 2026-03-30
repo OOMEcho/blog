@@ -9,9 +9,10 @@ import org.mapstruct.Mapping;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 文章信息转换类
+ * 文章信息转换类
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 @Mapper(componentModel = "spring")
 public interface ArticleConvert {

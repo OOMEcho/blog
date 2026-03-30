@@ -7,9 +7,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-03-16
- * @Description: 博客前台文章查询DTO
+ * 博客前台文章查询DTO
+ *
+ * @author xuesong.lei
+ * @since 2026-03-16
  */
 @Data
 @ApiModel("博客前台文章查询DTO")

@@ -9,9 +9,10 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2025-08-30 10:48:14
- * @Description: 针对表【t_role(角色信息表)】的数据库操作Mapper
+ * 针对表【t_role(角色信息表)】的数据库操作Mapper
+ *
+ * @author xuesong.lei
+ * @since 2025-08-30 10:48:14
  * @Entity: com.blog.modules.role.domain.entity.Role
  */
 public interface RoleMapper extends BaseMapper<Role> {

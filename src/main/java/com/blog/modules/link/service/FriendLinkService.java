@@ -5,9 +5,10 @@ import com.blog.modules.link.domain.dto.FriendLinkDTO;
 import com.blog.modules.link.domain.entity.FriendLink;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 友情链接业务层
+ * 友情链接业务层
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 public interface FriendLinkService {
 

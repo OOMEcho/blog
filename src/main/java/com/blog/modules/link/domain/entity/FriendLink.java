@@ -13,9 +13,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 友情链接表
+ * 友情链接表
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  * @TableName t_friend_link
  */
 @Data

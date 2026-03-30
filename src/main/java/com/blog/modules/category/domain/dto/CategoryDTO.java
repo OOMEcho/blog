@@ -12,9 +12,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 分类DTO
+ * 分类DTO
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  */
 @Data
 @ApiModel("分类DTO")

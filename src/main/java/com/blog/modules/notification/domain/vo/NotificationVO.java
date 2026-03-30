@@ -9,9 +9,10 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24
- * @Description: 通知VO
+ * 通知VO
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24
  */
 @Data
 @ApiModel("通知VO")

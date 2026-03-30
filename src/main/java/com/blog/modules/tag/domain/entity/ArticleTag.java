@@ -12,9 +12,10 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * @Author: xuesong.lei
- * @Date: 2026-02-24 10:00:00
- * @Description: 文章标签关联表
+ * 文章标签关联表
+ *
+ * @author xuesong.lei
+ * @since 2026-02-24 10:00:00
  * @TableName t_article_tag
  */
 @Data
