@@ -20,7 +20,7 @@ import java.util.Map;
  * 博客配置业务实现层
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @Service
 @RequiredArgsConstructor

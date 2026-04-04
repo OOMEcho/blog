@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
  * 分类实体类转换
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @Mapper(componentModel = "spring")
 public interface CategoryConvert {

@@ -9,7 +9,7 @@ import com.blog.modules.article.domain.vo.ArticleVO;
  * 文章业务层
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 public interface ArticleService {
 

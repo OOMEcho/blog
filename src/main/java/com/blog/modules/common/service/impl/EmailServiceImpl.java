@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * 邮箱业务实现层
  *
  * @author xuesong.lei
- * @since 2025/9/3 15:18
+ * @since 2025-09-03
  */
 @Service
 @RequiredArgsConstructor

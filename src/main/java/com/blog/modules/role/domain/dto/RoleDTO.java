@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
  * 角色DTO
  *
  * @author xuesong.lei
- * @since 2025/9/13 17:25
+ * @since 2025-09-13
  */
 @Data
 @ApiModel("角色DTO")

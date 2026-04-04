@@ -15,7 +15,7 @@ import javax.validation.constraints.Null;
  * 友情链接DTO
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @Data
 @ApiModel("友情链接DTO")

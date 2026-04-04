@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * 友情链接接口
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @RestController
 @Api(tags = "友情链接接口")

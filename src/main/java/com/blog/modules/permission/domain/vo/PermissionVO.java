@@ -9,6 +9,7 @@ import java.util.Date;
 
 /**
  * 权限VO
+ * @since 2026-03-01
  */
 @Data
 @ApiModel("权限VO")

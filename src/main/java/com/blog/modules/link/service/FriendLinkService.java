@@ -8,7 +8,7 @@ import com.blog.modules.link.domain.entity.FriendLink;
  * 友情链接业务层
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 public interface FriendLinkService {
 

@@ -12,7 +12,7 @@ import java.util.List;
  * 文章信息转换类
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @Mapper(componentModel = "spring")
 public interface ArticleConvert {

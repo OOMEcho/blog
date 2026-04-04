@@ -15,7 +15,7 @@ import javax.validation.constraints.Null;
  * 标签DTO
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @Data
 @ApiModel("标签DTO")

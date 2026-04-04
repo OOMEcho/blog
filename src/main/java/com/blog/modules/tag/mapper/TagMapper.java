@@ -11,7 +11,7 @@ import java.util.List;
  * 针对表【t_tag(标签表)】的数据库操作Mapper
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  * @Entity: com.blog.modules.tag.domain.entity.Tag
  */
 @Mapper

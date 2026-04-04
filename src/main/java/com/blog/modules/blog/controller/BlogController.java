@@ -19,7 +19,7 @@ import java.util.List;
  * 博客前台接口
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @RestController
 @Api(tags = "博客前台接口")

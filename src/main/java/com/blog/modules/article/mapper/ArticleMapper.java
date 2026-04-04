@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 针对表【t_article(文章表)】的数据库操作Mapper
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  * @Entity: com.blog.modules.article.domain.entity.Article
  */
 @Mapper

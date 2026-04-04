@@ -23,7 +23,7 @@ import java.util.List;
  * 分类业务实现层
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @Service
 @RequiredArgsConstructor

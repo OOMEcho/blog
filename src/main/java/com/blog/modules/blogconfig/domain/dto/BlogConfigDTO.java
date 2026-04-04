@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
  * 博客配置DTO
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @Data
 @ApiModel("博客配置DTO")

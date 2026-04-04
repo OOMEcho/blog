@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
  * 友情链接实体类转换
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @Mapper(componentModel = "spring")
 public interface FriendLinkConvert {

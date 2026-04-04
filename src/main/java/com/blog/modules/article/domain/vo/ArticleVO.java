@@ -13,7 +13,7 @@ import java.util.List;
  * 文章VO
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  */
 @Data
 @ApiModel("文章VO")

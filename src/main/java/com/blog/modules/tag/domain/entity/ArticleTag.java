@@ -15,7 +15,7 @@ import java.io.Serializable;
  * 文章标签关联表
  *
  * @author xuesong.lei
- * @since 2026-02-24 10:00:00
+ * @since 2026-02-24
  * @TableName t_article_tag
  */
 @Data

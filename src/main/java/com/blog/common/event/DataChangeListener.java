@@ -24,7 +24,7 @@ import java.util.List;
  * 数据变更监听器
  *
  * @author xuesong.lei
- * @since 2025/09/07 16:24
+ * @since 2025-09-07
  */
 @Slf4j
 @Component
