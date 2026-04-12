@@ -543,13 +543,6 @@ INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
 (2, 'notification:read'),
 (2, 'notification:readAll');
 
-INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
-(3, 'notification:page'),
-(3, 'notification:list'),
-(3, 'notification:unreadCount'),
-(3, 'notification:read'),
-(3, 'notification:readAll');
-
 INSERT INTO `t_blog_config` (`config_key`, `config_value`, `description`) VALUES
 ('site_name', '我的博客', '站点名称'),
 ('site_avatar', '', '站点头像'),
