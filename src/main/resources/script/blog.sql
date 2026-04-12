@@ -362,6 +362,28 @@ CREATE TABLE `t_friend_link`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '友情链接表';
 
+DROP TABLE IF EXISTS `t_open_project`;
+CREATE TABLE `t_open_project`
+(
+    `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `create_by`   BIGINT                   DEFAULT NULL COMMENT '创建人',
+    `update_by`   BIGINT                   DEFAULT NULL COMMENT '更新人',
+    `create_time` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted`     TINYINT         NOT NULL DEFAULT 0 COMMENT '逻辑删除标记(0=正常,1=删除)',
+    `version`     INT             NOT NULL DEFAULT 1 COMMENT '版本号,用于乐观锁',
+    `name`        VARCHAR(64)     NOT NULL COMMENT '项目名称',
+    `url`         VARCHAR(255)    NOT NULL COMMENT '项目地址',
+    `logo`        VARCHAR(255)             DEFAULT NULL COMMENT '项目Logo',
+    `description` VARCHAR(255)             DEFAULT NULL COMMENT '项目描述',
+    `tech_stack`  VARCHAR(255)             DEFAULT NULL COMMENT '技术栈',
+    `stars`       INT                      DEFAULT 0 COMMENT 'Star数量',
+    `sort`        INT             NOT NULL DEFAULT 0 COMMENT '排序',
+    `status`      CHAR(1)         NOT NULL DEFAULT '0' COMMENT '状态(0-正常,1-停用)',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT = '开源项目表';
+
 DROP TABLE IF EXISTS `t_blog_config`;
 CREATE TABLE `t_blog_config`
 (
