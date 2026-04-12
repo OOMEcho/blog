@@ -6,6 +6,7 @@ import com.blog.modules.blog.domain.dto.BlogArticleQueryDTO;
 import com.blog.modules.blogconfig.domain.entity.BlogConfig;
 import com.blog.modules.category.domain.entity.Category;
 import com.blog.modules.link.domain.entity.FriendLink;
+import com.blog.modules.openproject.domain.entity.OpenProject;
 import com.blog.modules.tag.domain.entity.Tag;
 
 import java.util.List;
@@ -52,6 +53,11 @@ public interface BlogService {
      * 友情链接列表
      */
     List<FriendLink> links();
+
+    /**
+     * 开源项目列表
+     */
+    List<OpenProject> openProjects();
 
     /**
      * 博客配置列表

@@ -7,11 +7,15 @@ import com.blog.modules.blog.service.BlogService;
 import com.blog.modules.blogconfig.domain.entity.BlogConfig;
 import com.blog.modules.category.domain.entity.Category;
 import com.blog.modules.link.domain.entity.FriendLink;
+import com.blog.modules.openproject.domain.entity.OpenProject;
 import com.blog.modules.tag.domain.entity.Tag;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -69,6 +73,12 @@ public class BlogController {
     @GetMapping("/links")
     public List<FriendLink> links() {
         return blogService.links();
+    }
+
+    @ApiOperation("开源项目列表")
+    @GetMapping("/projects")
+    public List<OpenProject> openProjects() {
+        return blogService.openProjects();
     }
 
     @ApiOperation("博客配置列表")

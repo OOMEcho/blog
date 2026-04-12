@@ -22,6 +22,8 @@ import com.blog.modules.tag.domain.entity.Tag;
 import com.blog.modules.tag.mapper.ArticleTagMapper;
 import com.blog.modules.tag.mapper.TagMapper;
 import com.blog.modules.link.mapper.FriendLinkMapper;
+import com.blog.modules.openproject.domain.entity.OpenProject;
+import com.blog.modules.openproject.mapper.OpenProjectMapper;
 import com.blog.modules.user.domain.entity.User;
 import com.blog.modules.user.mapper.UserMapper;
 import com.blog.utils.PageUtils;
@@ -57,6 +59,8 @@ public class BlogServiceImpl implements BlogService {
     private final UserMapper userMapper;
 
     private final FriendLinkMapper friendLinkMapper;
+
+    private final OpenProjectMapper openProjectMapper;
 
     private final BlogConfigMapper blogConfigMapper;
 
@@ -187,6 +191,15 @@ public class BlogServiceImpl implements BlogService {
         wrapper.eq(FriendLink::getStatus, "0")
                 .orderByAsc(FriendLink::getSort);
         return friendLinkMapper.selectList(wrapper);
+    }
+
+    @Override
+    public List<OpenProject> openProjects() {
+        LambdaQueryWrapper<OpenProject> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OpenProject::getStatus, "0")
+                .orderByAsc(OpenProject::getSort)
+                .orderByDesc(OpenProject::getCreateTime);
+        return openProjectMapper.selectList(wrapper);
     }
 
     @Override
