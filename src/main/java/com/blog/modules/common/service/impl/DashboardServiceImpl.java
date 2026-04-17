@@ -5,7 +5,7 @@ import com.blog.modules.article.mapper.ArticleMapper;
 import com.blog.modules.common.domain.vo.AccessTrendVO;
 import com.blog.modules.common.domain.vo.DashboardVO;
 import com.blog.modules.common.service.DashboardService;
-import com.blog.modules.log.mapper.SysLoginLogMapper;
+import com.blog.modules.log.mapper.ArticleViewLogMapper;
 import com.blog.modules.user.domain.entity.User;
 import com.blog.modules.user.mapper.UserMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -32,7 +32,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final ArticleMapper articleMapper;
 
-    private final SysLoginLogMapper sysLoginLogMapper;
+    private final ArticleViewLogMapper articleViewLogMapper;
 
     @Override
     public DashboardVO getStatistics() {
@@ -95,7 +95,7 @@ public class DashboardServiceImpl implements DashboardService {
         if (days == null || (days != 7 && days != 30)) {
             days = 7;
         }
-        return sysLoginLogMapper.selectAccessTrend(days);
+        return articleViewLogMapper.selectAccessTrend(days);
     }
 
     /**

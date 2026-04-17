@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.modules.log.mapper.ArticleViewLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.blog.modules.log.domain.entity.ArticleViewLog">
+        <id property="id" column="id"/>
+        <result property="articleId" column="article_id"/>
+        <result property="viewIp" column="view_ip"/>
+        <result property="viewLocal" column="view_local"/>
+        <result property="viewBrowser" column="view_browser"/>
+        <result property="viewOs" column="view_os"/>
+        <result property="viewTime" column="view_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,article_id,view_ip,view_local,view_browser,view_os,view_time
+    </sql>
+
+    <select id="selectAccessTrend" resultType="com.blog.modules.common.domain.vo.AccessTrendVO">
+        SELECT DATE_FORMAT(view_time, '%Y-%m-%d') AS date,
+               COUNT(*)                           AS count
+        FROM t_article_view_log
+        WHERE view_time >= DATE_SUB(CURDATE(), INTERVAL #{days} DAY)
+        GROUP BY DATE_FORMAT(view_time, '%Y-%m-%d')
+        ORDER BY DATE_FORMAT(view_time, '%Y-%m-%d')
+    </select>
+</mapper>

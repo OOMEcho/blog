@@ -414,3 +414,19 @@ CREATE TABLE `t_notification`
     INDEX `idx_user_read` (`user_id`, `is_read`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '站内通知表';
+
+DROP TABLE IF EXISTS `t_article_view_log`;
+CREATE TABLE `t_article_view_log`
+(
+    `id`           BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `article_id`   BIGINT       NOT NULL COMMENT '文章ID',
+    `view_ip`      VARCHAR(64)           DEFAULT NULL COMMENT '访问IP',
+    `view_local`   VARCHAR(128)          DEFAULT NULL COMMENT '访问地点',
+    `view_browser` VARCHAR(64)           DEFAULT NULL COMMENT '浏览器类型',
+    `view_os`      VARCHAR(64)           DEFAULT NULL COMMENT '操作系统',
+    `view_time`    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '访问时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `idx_view_time` (`view_time`),
+    INDEX `idx_article_id` (`article_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT = '文章访问日志表';

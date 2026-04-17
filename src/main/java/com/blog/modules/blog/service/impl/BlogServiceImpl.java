@@ -2,8 +2,10 @@ package com.blog.modules.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.blog.common.constant.CommonConstants;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.common.exception.BusinessException;
+import com.blog.common.ip2region.Ip2regionService;
 import com.blog.common.result.ResultCodeEnum;
 import com.blog.modules.article.domain.entity.Article;
 import com.blog.modules.article.domain.vo.ArticleVO;
@@ -17,6 +19,8 @@ import com.blog.modules.category.domain.entity.Category;
 import com.blog.modules.category.mapper.CategoryMapper;
 import com.blog.modules.file.service.FileService;
 import com.blog.modules.link.domain.entity.FriendLink;
+import com.blog.modules.log.domain.entity.ArticleViewLog;
+import com.blog.modules.log.mapper.ArticleViewLogMapper;
 import com.blog.modules.tag.domain.entity.ArticleTag;
 import com.blog.modules.tag.domain.entity.Tag;
 import com.blog.modules.tag.mapper.ArticleTagMapper;
@@ -26,13 +30,19 @@ import com.blog.modules.openproject.domain.entity.OpenProject;
 import com.blog.modules.openproject.mapper.OpenProjectMapper;
 import com.blog.modules.user.domain.entity.User;
 import com.blog.modules.user.mapper.UserMapper;
+import com.blog.utils.IpUtils;
 import com.blog.utils.PageUtils;
+import eu.bitwalker.useragentutils.UserAgent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,6 +75,10 @@ public class BlogServiceImpl implements BlogService {
     private final BlogConfigMapper blogConfigMapper;
 
     private final FileService fileService;
+
+    private final ArticleViewLogMapper articleViewLogMapper;
+
+    private final Ip2regionService ip2regionService;
 
     @Override
     public PageVO<ArticleVO> articles(BlogArticleQueryDTO dto) {
@@ -125,6 +139,9 @@ public class BlogServiceImpl implements BlogService {
                 new UpdateWrapper<Article>()
                         .eq("id", id)
                         .setSql("view_count = view_count + 1"));
+
+        // 记录访问日志
+        saveViewLog(id);
 
         // 重新查询获取最新浏览量
         article = articleMapper.selectById(id);
@@ -205,6 +222,26 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public List<BlogConfig> config() {
         return blogConfigMapper.selectList(null);
+    }
+
+    private void saveViewLog(Long articleId) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            return;
+        }
+        HttpServletRequest request = attributes.getRequest();
+        String ip = IpUtils.getIpAddr(request);
+        String region = ip2regionService.getRegion(ip);
+        UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader(CommonConstants.USER_AGENT));
+
+        ArticleViewLog log = new ArticleViewLog();
+        log.setArticleId(articleId);
+        log.setViewIp(ip);
+        log.setViewLocal(region);
+        log.setViewBrowser(userAgent.getBrowser().getName());
+        log.setViewOs(userAgent.getOperatingSystem().getName());
+        log.setViewTime(new Date());
+        articleViewLogMapper.insert(log);
     }
 
     /**
