@@ -268,6 +268,6 @@ npm run serve
 
 <div align="center">
 
-Made with ❤️ by OOMEcho
+Made with ❤️ by [OOMEcho](https://github.com/OOMEcho)
 
 </div>
