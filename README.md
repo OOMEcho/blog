@@ -268,6 +268,8 @@ npm run serve
 
 <div align="center">
 
+**如果这个项目对您有帮助，请给它一个 ⭐ Star！**
+
 Made with ❤️ by [OOMEcho](https://github.com/OOMEcho)
 
 </div>
