@@ -31,7 +31,8 @@ fi
 
 echo "5. 启动Docker容器..."
 docker run -d -it --restart=always \
-  -p 9090:9090 \
+  --network app-network \
+  -p 127.0.0.1:9090:9090 \
   -v /home/blog/config:/blog/config \
   -v /home/blog/logs:/blog/logs \
   --name blog \
