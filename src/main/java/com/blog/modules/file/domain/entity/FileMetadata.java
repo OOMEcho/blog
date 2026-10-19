@@ -2,6 +2,7 @@ package com.blog.modules.file.domain.entity;
 
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.blog.common.file.FileAccessType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -134,6 +135,13 @@ public class FileMetadata implements Serializable {
     @ApiModelProperty("文件类型")
     @TableField(value = "content_type")
     private String contentType;
+
+    /**
+     * 文件访问类型（PUBLIC=公开，PRIVATE=私有）
+     */
+    @ApiModelProperty("文件访问类型（PUBLIC=公开，PRIVATE=私有）")
+    @TableField(value = "access_type")
+    private FileAccessType accessType;
 
     /**
      * 存储平台

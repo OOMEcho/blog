@@ -1,5 +1,6 @@
 package com.blog.common.file.service;
 
+import com.blog.common.file.FileAccessType;
 import com.blog.modules.file.domain.entity.FileMetadata;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,9 +16,14 @@ import java.time.Duration;
 public interface FileStorageService {
 
     /**
-     * 上传文件
+     * 上传公开文件，保持原有调用方式
      */
     FileMetadata upload(MultipartFile file, String directory);
+
+    /**
+     * 按指定访问类型上传文件，元数据入库时即确定访问属性
+     */
+    FileMetadata upload(MultipartFile file, String directory, FileAccessType accessType);
 
     /**
      * 下载文件

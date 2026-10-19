@@ -3,6 +3,7 @@ package com.blog.common.file.service.impl;
 import com.blog.common.constant.FileConstants;
 import com.blog.common.exception.BusinessException;
 import com.blog.common.file.StoragePlatform;
+import com.blog.common.file.FileAccessType;
 import com.blog.common.file.config.FileUploadProperties;
 import com.blog.common.file.service.AbstractFileStorageService;
 import com.blog.modules.file.domain.entity.FileMetadata;
@@ -37,7 +38,7 @@ public class MinioFileStorageServiceImpl extends AbstractFileStorageService {
     }
 
     @Override
-    public FileMetadata upload(MultipartFile file, String directory) {
+    public FileMetadata upload(MultipartFile file, String directory, FileAccessType accessType) {
         try {
             MinioClient client = getMinioClient();
             ensureBucketExists(client);
@@ -46,7 +47,7 @@ public class MinioFileStorageServiceImpl extends AbstractFileStorageService {
             String objectName = buildObjectName(directory, fileName);
 
             byte[] fileBytes = file.getBytes();
-            validateFile(file, fileBytes);
+            validateFile(file, fileBytes, accessType);
 
             try (InputStream inputStream = new ByteArrayInputStream(fileBytes)) {
                 client.putObject(PutObjectArgs.builder()
@@ -58,7 +59,7 @@ public class MinioFileStorageServiceImpl extends AbstractFileStorageService {
             }
 
             return buildFileUploadResult(file, fileName, objectName, fileBytes,
-                    StoragePlatform.MINIO.name());
+                    StoragePlatform.MINIO.name(), accessType);
 
         } catch (Exception e) {
             log.error("MinIO文件上传失败", e);

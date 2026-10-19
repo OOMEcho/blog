@@ -3,6 +3,7 @@ package com.blog.common.file.service.impl;
 import com.blog.common.constant.FileConstants;
 import com.blog.common.exception.BusinessException;
 import com.blog.common.file.StoragePlatform;
+import com.blog.common.file.FileAccessType;
 import com.blog.common.file.config.FileUploadProperties;
 import com.blog.common.file.service.AbstractFileStorageService;
 import com.blog.modules.file.domain.entity.FileMetadata;
@@ -46,13 +47,13 @@ public class TencentCosFileStorageServiceImpl extends AbstractFileStorageService
     }
 
     @Override
-    public FileMetadata upload(MultipartFile file, String directory) {
+    public FileMetadata upload(MultipartFile file, String directory, FileAccessType accessType) {
         try {
             String fileName = generateFileName(file.getOriginalFilename());
             String objectName = buildObjectName(directory, fileName);
 
             byte[] fileBytes = file.getBytes();
-            validateFile(file, fileBytes);
+            validateFile(file, fileBytes, accessType);
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(fileBytes.length);
@@ -69,7 +70,7 @@ public class TencentCosFileStorageServiceImpl extends AbstractFileStorageService
             }
 
             return buildFileUploadResult(file, fileName, objectName, fileBytes,
-                    StoragePlatform.TENCENT_COS.name());
+                    StoragePlatform.TENCENT_COS.name(), accessType);
 
         } catch (Exception e) {
             log.error("腾讯云COS文件上传失败", e);

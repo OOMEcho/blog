@@ -5,8 +5,8 @@ spring:
     name: blog # 应用名称
   servlet: # 文件上传配置
     multipart:
-      max-file-size: 2MB # 上传文件大小限制
-      max-request-size: 10MB # 上传文件总大小限制
+      max-file-size: 50MB # 上传文件大小限制
+      max-request-size: 52MB # 上传文件总大小限制
   redis: # Redis配置
     host: 127.0.0.1 # 地址(需要改成你的Redis地址)
     port: 6379 # 端口

@@ -20,6 +20,7 @@
         <result property="fileSize" column="file_size"/>
         <result property="contentType" column="content_type"/>
         <result property="platform" column="platform"/>
+        <result property="accessType" column="access_type"/>
         <result property="uploadTime" column="upload_time"/>
         <result property="md5" column="md5"/>
     </resultMap>
@@ -27,7 +28,7 @@
     <sql id="Base_Column_List">
         id,create_by,update_by,create_time,update_time,deleted,
         version,remark,file_name,original_file_name,suffix,
-        file_path,file_size,content_type,platform,
+        file_path,file_size,content_type,platform,access_type,
         upload_time,md5
     </sql>
 </mapper>

@@ -118,7 +118,7 @@ public interface FileService {
      * 将文件路径解析为可公开访问的URL。
      *
      * @param filePath 文件路径或已有URL
-     * @return 可访问URL；无法解析时返回原值
+     * @return 可访问URL；私有文件返回null，无法解析时返回原值
      */
     String resolvePublicAccessUrl(String filePath);
 }

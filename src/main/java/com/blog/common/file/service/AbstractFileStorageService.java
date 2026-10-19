@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.blog.common.constant.FileConstants;
 import com.blog.common.exception.BusinessException;
+import com.blog.common.file.FileAccessType;
 import com.blog.common.file.config.FileUploadProperties;
 import com.blog.modules.file.domain.entity.FileMetadata;
 import com.blog.modules.file.mapper.FileMetadataMapper;
@@ -33,10 +34,18 @@ public abstract class AbstractFileStorageService implements FileStorageService {
         this.fileMetadataMapper = fileMetadataMapper;
     }
 
+    @Override
+    public FileMetadata upload(MultipartFile file, String directory) {
+        return upload(file, directory, FileAccessType.PUBLIC);
+    }
+
     /**
      * 文件上传前的统一校验
      */
-    protected void validateFile(MultipartFile file, byte[] fileBytes) {
+    protected void validateFile(MultipartFile file, byte[] fileBytes, FileAccessType accessType) {
+        if (accessType == null) {
+            throw new BusinessException("文件访问类型不能为空");
+        }
         validateFileBasic(file);
         validateFileSize(file);
         validateFileExtension(file);
@@ -139,7 +148,7 @@ public abstract class AbstractFileStorageService implements FileStorageService {
     /**
      * 构建文件上传结果并入库
      */
-    protected FileMetadata buildFileUploadResult(MultipartFile file, String fileName, String objectName, byte[] bytes, String platform) {
+    protected FileMetadata buildFileUploadResult(MultipartFile file, String fileName, String objectName, byte[] bytes, String platform, FileAccessType accessType) {
         FileMetadata build = new FileMetadata()
                 .setCreateBy(SecurityUtils.getUserId())
                 .setFileName(fileName)
@@ -149,6 +158,7 @@ public abstract class AbstractFileStorageService implements FileStorageService {
                 .setFileSize((long) bytes.length)
                 .setContentType(getContentType(file))
                 .setPlatform(platform)
+                .setAccessType(accessType)
                 .setUploadTime(new Date())
                 .setMd5(DigestUtil.md5Hex(bytes));
 

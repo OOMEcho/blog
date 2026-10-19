@@ -259,12 +259,53 @@ CREATE TABLE `t_file_metadata`
     `file_size`          BIGINT          NOT NULL COMMENT '文件大小,单位字节',
     `content_type`       VARCHAR(128)             DEFAULT NULL COMMENT '文件类型',
     `platform`           VARCHAR(16)              DEFAULT NULL COMMENT '存储平台',
+    `access_type`        VARCHAR(16)     NOT NULL DEFAULT 'PUBLIC' COMMENT '访问类型（PUBLIC=公开，PRIVATE=私有）',
     `upload_time`        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '上传时间',
     `md5`                VARCHAR(64)              DEFAULT NULL COMMENT '文件MD5值',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX `idx_file_file_path` (`file_path`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT = '文件元数据表';
+
+-- 先删除子表，保证完整初始化脚本可在已有摄影表的开发库中重建。
+DROP TABLE IF EXISTS `t_photo`;
+DROP TABLE IF EXISTS `t_photo_album`;
+CREATE TABLE `t_photo_album`
+(
+    `id`             BIGINT      NOT NULL COMMENT '主键ID',
+    `draft_json`     MEDIUMTEXT  NOT NULL COMMENT '相册草稿快照',
+    `published_json` MEDIUMTEXT           DEFAULT NULL COMMENT '相册发布快照',
+    `status`         VARCHAR(16) NOT NULL DEFAULT 'DRAFT' COMMENT '相册状态(DRAFT=草稿,PUBLISHED=发布,OFFLINE=下架)',
+    `revision`       INT         NOT NULL DEFAULT 1 COMMENT '相册修订版本号',
+    `updated_at`     DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    INDEX `idx_photo_album_status` (`status`, `updated_at`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT = '摄影相册表';
+
+CREATE TABLE `t_photo`
+(
+    `id`                BIGINT       NOT NULL COMMENT '主键ID',
+    `album_id`          BIGINT       NOT NULL COMMENT '相册ID',
+    `original_name`     VARCHAR(255) NOT NULL COMMENT '原始文件名',
+    `sha256`            CHAR(64)     NOT NULL COMMENT '原始照片SHA-256摘要',
+    `file_size`         BIGINT       NOT NULL COMMENT '原始文件大小,单位字节',
+    `width`             INT          NOT NULL COMMENT '校正方向后的照片宽度',
+    `height`            INT          NOT NULL COMMENT '校正方向后的照片高度',
+    `taken_at`          VARCHAR(64)           DEFAULT NULL COMMENT '拍摄时间',
+    `camera`            TEXT                  DEFAULT NULL COMMENT '相机型号',
+    `lens`              TEXT                  DEFAULT NULL COMMENT '镜头型号',
+    `aperture`          TEXT                  DEFAULT NULL COMMENT '光圈',
+    `shutter`           TEXT                  DEFAULT NULL COMMENT '快门速度',
+    `iso`               TEXT                  DEFAULT NULL COMMENT 'ISO感光度',
+    `original_file_id`  BIGINT       NOT NULL COMMENT '原图文件ID',
+    `thumbnail_file_id` BIGINT       NOT NULL COMMENT '缩略图文件ID',
+    `display_file_id`   BIGINT       NOT NULL COMMENT '浏览图文件ID',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_photo_album_hash` (`album_id`, `sha256`),
+    CONSTRAINT `fk_photo_album` FOREIGN KEY (`album_id`) REFERENCES `t_photo_album` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT = '摄影照片表';
 
 DROP TABLE IF EXISTS `t_category`;
 CREATE TABLE `t_category`

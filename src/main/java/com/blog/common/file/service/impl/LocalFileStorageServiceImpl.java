@@ -5,6 +5,7 @@ import cn.hutool.crypto.SecureUtil;
 import com.blog.common.constant.FileConstants;
 import com.blog.common.exception.BusinessException;
 import com.blog.common.file.StoragePlatform;
+import com.blog.common.file.FileAccessType;
 import com.blog.common.file.config.FileUploadProperties;
 import com.blog.common.file.service.AbstractFileStorageService;
 import com.blog.modules.file.domain.entity.FileMetadata;
@@ -39,7 +40,7 @@ public class LocalFileStorageServiceImpl extends AbstractFileStorageService {
     }
 
     @Override
-    public FileMetadata upload(MultipartFile file, String directory) {
+    public FileMetadata upload(MultipartFile file, String directory, FileAccessType accessType) {
         try {
             directory = FileConstants.sanitizeDirectory(directory);
 
@@ -52,12 +53,12 @@ public class LocalFileStorageServiceImpl extends AbstractFileStorageService {
             String filePath = fullDirectory + FileConstants.SEPARATOR + fileName;
 
             byte[] fileBytes = file.getBytes();
-            validateFile(file, fileBytes);
+            validateFile(file, fileBytes, accessType);
 
             FileUtil.writeBytes(fileBytes, new File(filePath));
 
             return buildFileUploadResult(file, fileName, filePath, fileBytes,
-                    StoragePlatform.LOCAL.name());
+                    StoragePlatform.LOCAL.name(), accessType);
 
         } catch (Exception e) {
             log.error("本地文件上传失败", e);

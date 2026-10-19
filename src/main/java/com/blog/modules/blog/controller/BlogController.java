@@ -9,6 +9,11 @@ import com.blog.modules.category.domain.entity.Category;
 import com.blog.modules.link.domain.entity.FriendLink;
 import com.blog.modules.openproject.domain.entity.OpenProject;
 import com.blog.modules.tag.domain.entity.Tag;
+import com.blog.modules.photography.domain.dto.PhotoAlbumQueryDTO;
+import com.blog.modules.photography.domain.dto.PhotoQueryDTO;
+import com.blog.modules.photography.domain.vo.PhotoAlbumVO;
+import com.blog.modules.photography.domain.vo.PhotoVO;
+import com.blog.modules.photography.service.PhotographyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -32,6 +38,8 @@ import java.util.List;
 public class BlogController {
 
     private final BlogService blogService;
+
+    private final PhotographyService photographyService;
 
     @ApiOperation("已发布文章列表(分页)")
     @GetMapping("/articles")
@@ -85,5 +93,30 @@ public class BlogController {
     @GetMapping("/config")
     public List<BlogConfig> config() {
         return blogService.config();
+    }
+
+    @ApiOperation("已发布摄影相册列表（分页）")
+    @GetMapping("/photography/albums")
+    public PageVO<PhotoAlbumVO> photographyAlbums(PhotoAlbumQueryDTO dto) {
+        return photographyService.publishedPageList(dto);
+    }
+
+    @ApiOperation("已发布摄影相册详情")
+    @GetMapping("/photography/albums/{id}")
+    public PhotoAlbumVO photographyAlbumDetail(@PathVariable("id") Long id) {
+        return photographyService.publishedDetail(id);
+    }
+
+    @ApiOperation("已发布摄影照片列表（分页）")
+    @GetMapping("/photography/albums/{id}/photos")
+    public PageVO<PhotoVO> photographyPhotos(@PathVariable("id") Long id, PhotoQueryDTO dto) {
+        return photographyService.publishedPhotos(id, dto);
+    }
+
+    @ApiOperation("已发布摄影照片预览及原图下载")
+    @GetMapping("/photography/albums/{id}/photos/{photoId}/{variant}")
+    public void photographyPreview(@PathVariable("id") Long id, @PathVariable("photoId") Long photoId,
+                        @PathVariable("variant") String variant, HttpServletResponse response) {
+        photographyService.preview(id, photoId, variant, true, response);
     }
 }

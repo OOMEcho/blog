@@ -7,8 +7,10 @@ import cn.hutool.crypto.SecureUtil;
 import com.blog.common.constant.FileConstants;
 import com.blog.common.domain.vo.PageVO;
 import com.blog.common.exception.BusinessException;
+import com.blog.common.result.ResultCodeEnum;
 import com.blog.common.file.FileStorageServiceFactory;
 import com.blog.common.file.StoragePlatform;
+import com.blog.common.file.FileAccessType;
 import com.blog.common.file.config.FileUploadProperties;
 import com.blog.common.file.service.FileStorageService;
 import com.blog.modules.file.domain.dto.FileMetadataPageDTO;
@@ -99,6 +101,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public void download(String filePath, HttpServletResponse response) {
         FileMetadata fileMetadata = getMetadataByFilePath(filePath);
+        checkPublicAccess(fileMetadata);
         FileStorageService storageService = resolveStorageService(fileMetadata.getPlatform());
 
         final String fileName = fileMetadata.getOriginalFileName();
@@ -146,6 +149,7 @@ public class FileServiceImpl implements FileService {
         }
 
         FileMetadata fileMetadata = getMetadataByFilePath(filePath);
+        checkPublicAccess(fileMetadata);
         if (!StoragePlatform.LOCAL.name().equals(fileMetadata.getPlatform())) {
             throw new BusinessException("无效链接");
         }
@@ -182,6 +186,7 @@ public class FileServiceImpl implements FileService {
             throw new BusinessException("文件不存在");
         }
 
+        checkPublicAccess(fileMetadata);
         String cdnAccessUrl = buildCdnAccessUrl(fileMetadata);
         if (StrUtil.isNotBlank(cdnAccessUrl)) {
             try {
@@ -240,6 +245,10 @@ public class FileServiceImpl implements FileService {
     @Transactional(rollbackFor = Exception.class)
     public String deleteFile(String filePath) {
         FileMetadata fileMetadata = getMetadataByFilePath(filePath);
+        // 私有文件由所属业务维护，避免直接删除相册等业务正在引用的文件。
+        if (fileMetadata.getAccessType() != FileAccessType.PUBLIC) {
+            throw new BusinessException("私有文件请通过所属业务删除");
+        }
         FileStorageService storageService = resolveStorageService(fileMetadata.getPlatform());
 
         storageService.delete(fileMetadata.getFilePath());
@@ -273,6 +282,7 @@ public class FileServiceImpl implements FileService {
         queryWrapper.eq(FileMetadata::getFilePath, filePath);
         FileMetadata existed = fileMetadataMapper.selectOne(queryWrapper);
         if (ObjectUtils.isNotNull(existed)) {
+            checkPublicAccess(existed);
             populateAccessUrl(existed);
             return existed;
         }
@@ -302,6 +312,7 @@ public class FileServiceImpl implements FileService {
                 .setFileSize(fileSize)
                 .setContentType(StrUtil.blankToDefault(dto.getContentType(), "application/octet-stream"))
                 .setPlatform(fileUploadProperties.getPlatform().name())
+                .setAccessType(FileAccessType.PUBLIC)
                 .setUploadTime(new Date());
 
         fileMetadataMapper.insert(metadata);
@@ -316,6 +327,7 @@ public class FileServiceImpl implements FileService {
         }
 
         FileMetadata fileMetadata = getMetadataByFilePath(filePath);
+        checkPublicAccess(fileMetadata);
         FileStorageService storageService = resolveStorageService(fileMetadata.getPlatform());
 
         if (!storageService.exists(fileMetadata.getFilePath())) {
@@ -381,6 +393,15 @@ public class FileServiceImpl implements FileService {
         return fileMetadata;
     }
 
+    /**
+     * 私有文件只能由所属业务校验后读取，通用入口不允许访问
+     */
+    private void checkPublicAccess(FileMetadata metadata) {
+        if (metadata.getAccessType() != FileAccessType.PUBLIC) {
+            throw new BusinessException(ResultCodeEnum.NOT_FOUND);
+        }
+    }
+
     private FileStorageService resolveStorageService(String platform) {
         StoragePlatform storagePlatform;
         try {
@@ -399,6 +420,9 @@ public class FileServiceImpl implements FileService {
     }
 
     private String buildAccessUrl(FileMetadata metadata) {
+        if (metadata.getAccessType() != FileAccessType.PUBLIC) {
+            return null;
+        }
         String cdnAccessUrl = buildCdnAccessUrl(metadata);
         if (StrUtil.isNotBlank(cdnAccessUrl)) {
             return cdnAccessUrl;
@@ -418,7 +442,8 @@ public class FileServiceImpl implements FileService {
     }
 
     private String buildCdnAccessUrl(FileMetadata metadata) {
-        if (ObjectUtils.isNull(metadata) || StrUtil.isBlank(metadata.getFilePath()) || !isMinioPlatform(metadata.getPlatform())) {
+        if (ObjectUtils.isNull(metadata) || StrUtil.isBlank(metadata.getFilePath())
+                || metadata.getAccessType() != FileAccessType.PUBLIC || !isMinioPlatform(metadata.getPlatform())) {
             return null;
         }
 

@@ -3,6 +3,7 @@ package com.blog.common.file.service.impl;
 import com.blog.common.constant.FileConstants;
 import com.blog.common.exception.BusinessException;
 import com.blog.common.file.StoragePlatform;
+import com.blog.common.file.FileAccessType;
 import com.blog.common.file.config.FileUploadProperties;
 import com.blog.common.file.service.AbstractFileStorageService;
 import com.blog.modules.file.domain.entity.FileMetadata;
@@ -41,10 +42,10 @@ public class AliyunOssFileStorageServiceImpl extends AbstractFileStorageService 
     }
 
     @Override
-    public FileMetadata upload(MultipartFile file, String directory) {
+    public FileMetadata upload(MultipartFile file, String directory, FileAccessType accessType) {
         try {
             byte[] fileBytes = file.getBytes();
-            validateFile(file, fileBytes);
+            validateFile(file, fileBytes, accessType);
 
             String fileName = generateFileName(file.getOriginalFilename());
             String objectName = buildObjectName(directory, fileName);
@@ -57,7 +58,7 @@ public class AliyunOssFileStorageServiceImpl extends AbstractFileStorageService 
                     new ByteArrayInputStream(fileBytes), metadata);
 
             return buildFileUploadResult(file, fileName, objectName, fileBytes,
-                    StoragePlatform.ALIYUN_OSS.name());
+                    StoragePlatform.ALIYUN_OSS.name(), accessType);
 
         } catch (Exception e) {
             log.error("阿里云OSS文件上传失败", e);

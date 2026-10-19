@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.modules.photography.mapper.PhotoAlbumMapper">
+
+    <!-- 锁定相册，避免并发保存草稿或发布时覆盖其他修改 -->
+    <select id="lock" resultType="com.blog.modules.photography.domain.entity.PhotoAlbum">
+        SELECT id, draft_json, published_json, status, revision, updated_at
+        FROM t_photo_album
+        WHERE id = #{id}
+        FOR UPDATE
+    </select>
+</mapper>

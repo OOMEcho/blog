@@ -1,3 +1,5 @@
+START TRANSACTION;
+
 INSERT INTO `t_user` (`id`, `create_by`, `update_by`, `create_time`, `update_time`, `deleted`, `version`, `remark`, `username`, `password`, `nickname`, `email`, `sex`, `phone`, `avatar`, `status`, `last_login_ip`, `last_login_time`)
 VALUES (1, NULL, NULL, now(), now(), 0, 1, NULL, 'admin', '$2a$10$GHoUDIvjIXO9ey5sd5D1YOL/YpIWca4PxzrnSepjEG3v8MQcoaFXS', '管理员', '228389787@qq.com', '0', '18888888888', NULL, '0', '127.0.0.1', now());
 
@@ -58,7 +60,8 @@ INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `re
 ('system:loginLog:page', '登录日志', 'M', '0', '页面权限', 1),
 ('system:operateLog:page', '操作日志', 'M', '0', '页面权限', 1),
 ('system:file:page', '文件管理', 'M', '0', '页面权限', 1),
-('notification:page', '我的通知', 'M', '0', '页面权限', 1);
+('notification:page', '我的通知', 'M', '0', '页面权限', 1),
+('blog:photography:page', '摄影管理', 'M', '0', '页面权限', 1);
 
 INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `remark`, `create_by`) VALUES
 ('blog:article:add:btn', '文章管理-新增(按钮)', 'B', '0', '按钮权限', 1),
@@ -112,7 +115,13 @@ INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `re
 ('system:file:download:btn', '文件管理-下载(按钮)', 'B', '0', '按钮权限', 1),
 ('system:file:delete:btn', '文件管理-删除(按钮)', 'B', '0', '按钮权限', 1),
 ('system:loginLog:export:btn', '登录日志-导出(按钮)', 'B', '0', '按钮权限', 1),
-('system:operateLog:export:btn', '操作日志-导出(按钮)', 'B', '0', '按钮权限', 1);
+('system:operateLog:export:btn', '操作日志-导出(按钮)', 'B', '0', '按钮权限', 1),
+('blog:photography:add:btn', '摄影管理-新增(按钮)', 'B', '0', '按钮权限', 1),
+('blog:photography:update:btn', '摄影管理-修改(按钮)', 'B', '0', '按钮权限', 1),
+('blog:photography:upload:btn', '摄影管理-上传照片(按钮)', 'B', '0', '按钮权限', 1),
+('blog:photography:preview:btn', '摄影管理-预览(按钮)', 'B', '0', '按钮权限', 1),
+('blog:photography:publish:btn', '摄影管理-发布(按钮)', 'B', '0', '按钮权限', 1),
+('blog:photography:unpublish:btn', '摄影管理-下架(按钮)', 'B', '0', '按钮权限', 1);
 
 INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `remark`, `create_by`) VALUES
 ('blog:article:list', '文章管理-分页列表', 'A', '0', '接口权限', 1),
@@ -204,7 +213,15 @@ INSERT INTO `t_permission` (`perm_code`, `perm_name`, `perm_type`, `status`, `re
 ('notification:list', '通知管理-分页列表', 'A', '0', '接口权限', 1),
 ('notification:unreadCount', '通知管理-未读数量', 'A', '0', '接口权限', 1),
 ('notification:read', '通知管理-标记已读', 'A', '0', '接口权限', 1),
-('notification:readAll', '通知管理-全部已读', 'A', '0', '接口权限', 1);
+('notification:readAll', '通知管理-全部已读', 'A', '0', '接口权限', 1),
+('blog:photography:list', '摄影管理-分页列表', 'A', '0', '接口权限', 1),
+('blog:photography:detail', '摄影管理-详情', 'A', '0', '接口权限', 1),
+('blog:photography:add', '摄影管理-新增', 'A', '0', '接口权限', 1),
+('blog:photography:update', '摄影管理-修改', 'A', '0', '接口权限', 1),
+('blog:photography:upload', '摄影管理-上传照片', 'A', '0', '接口权限', 1),
+('blog:photography:preview', '摄影管理-预览及原图下载', 'A', '0', '接口权限', 1),
+('blog:photography:publish', '摄影管理-发布', 'A', '0', '接口权限', 1),
+('blog:photography:unpublish', '摄影管理-下架', 'A', '0', '接口权限', 1);
 
 INSERT INTO `t_menu` (`id`, `menu_code`, `menu_name`, `parent_id`, `order_num`, `name`, `path`, `menu_type`, `icon`, `hidden`, `status`, `create_by`) VALUES
 (1, 'blog', '博客管理', 0, 1, 'Blog', '/blog', 'D', 'icon-wordwenjian', 0, '0', 1),
@@ -214,6 +231,7 @@ INSERT INTO `t_menu` (`id`, `menu_code`, `menu_name`, `parent_id`, `order_num`, 
 (6, 'blog:link', '友情链接', 1, 5, 'FriendLink', '/blog/link', 'M', 'icon-fasong', 0, '0', 1),
 (7, 'blog:config', '博客配置', 1, 6, 'BlogConfig', '/blog/config', 'M', 'icon-peizhi', 0, '0', 1),
 (8, 'blog:project', '开源项目', 1, 7, 'OpenProject', '/blog/project', 'M', 'icon-shijianchuliliangtongji', 0, '0', 1),
+(9, 'blog:photography', '摄影管理', 1, 8, 'Photography', '/blog/photography', 'M', 'icon-riqixuanze', 0, '0', 1),
 (10, 'system', '系统管理', 0, 2, 'System', '/system', 'D', 'icon-shezhi', 0, '0', 1),
 (11, 'system:user', '用户管理', 10, 1, 'User', '/system/user', 'M', 'icon-yonghuzhuzhanghaoguanli', 0, '0', 1),
 (12, 'system:role', '角色管理', 10, 2, 'Role', '/system/role', 'M', 'icon-zhuzhanghaoliebiao', 0, '0', 1),
@@ -236,6 +254,7 @@ INSERT INTO `t_menu_permission` (`menu_id`, `perm_code`) VALUES
 (6, 'blog:link:page'),
 (7, 'blog:config:page'),
 (8, 'blog:project:page'),
+(9, 'blog:photography:page'),
 (10, 'system:manage'),
 (11, 'system:user:page'),
 (12, 'system:role:page'),
@@ -340,7 +359,15 @@ INSERT INTO `t_resource` (`request_method`, `request_uri`, `perm_code`, `status`
 ('GET', '/notification/pageList', 'notification:list', '0', '通知管理-分页列表', 1),
 ('GET', '/notification/unreadCount', 'notification:unreadCount', '0', '通知管理-未读数量', 1),
 ('PUT', '/notification/read/*', 'notification:read', '0', '通知管理-标记已读', 1),
-('PUT', '/notification/readAll', 'notification:readAll', '0', '通知管理-全部已读', 1);
+('PUT', '/notification/readAll', 'notification:readAll', '0', '通知管理-全部已读', 1),
+('GET', '/photography/pageList', 'blog:photography:list', '0', '摄影管理-分页列表', 1),
+('GET', '/photography/detail/*', 'blog:photography:detail', '0', '摄影管理-详情', 1),
+('POST', '/photography/add', 'blog:photography:add', '0', '摄影管理-新增', 1),
+('PUT', '/photography/update', 'blog:photography:update', '0', '摄影管理-修改', 1),
+('POST', '/photography/upload/*', 'blog:photography:upload', '0', '摄影管理-上传照片', 1),
+('GET', '/photography/preview/*/*/*', 'blog:photography:preview', '0', '摄影管理-预览及原图下载', 1),
+('POST', '/photography/publish/*', 'blog:photography:publish', '0', '摄影管理-发布', 1),
+('POST', '/photography/unpublish/*', 'blog:photography:unpublish', '0', '摄影管理-下架', 1);
 
 INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
 (1, 'blog:manage'),
@@ -504,7 +531,22 @@ INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
 (1, 'notification:list'),
 (1, 'notification:unreadCount'),
 (1, 'notification:read'),
-(1, 'notification:readAll');
+(1, 'notification:readAll'),
+(1, 'blog:photography:page'),
+(1, 'blog:photography:add:btn'),
+(1, 'blog:photography:update:btn'),
+(1, 'blog:photography:upload:btn'),
+(1, 'blog:photography:preview:btn'),
+(1, 'blog:photography:publish:btn'),
+(1, 'blog:photography:unpublish:btn'),
+(1, 'blog:photography:list'),
+(1, 'blog:photography:detail'),
+(1, 'blog:photography:add'),
+(1, 'blog:photography:update'),
+(1, 'blog:photography:upload'),
+(1, 'blog:photography:preview'),
+(1, 'blog:photography:publish'),
+(1, 'blog:photography:unpublish');
 
 INSERT INTO `t_role_permission` (`role_id`, `perm_code`) VALUES
 (2, 'blog:manage'),
@@ -567,3 +609,5 @@ INSERT INTO `t_tag` (`id`, `name`, `color`, `create_by`) VALUES
 (3, 'Vue', '#42b883', 1),
 (4, '前端', '#2196F3', 1),
 (5, '后端', '#FF9800', 1);
+
+COMMIT;
